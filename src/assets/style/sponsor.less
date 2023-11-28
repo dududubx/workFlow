@@ -1,0 +1,168 @@
+.sponsor_vessel {
+    padding: 15px 20px;
+    background: #f7f9f9;
+    height: calc(100% - 30px);
+    width: calc(100% - 40px);
+
+    .el-button {
+        height: 30px;
+        font-size: 12px;
+        color: #333333;
+    }
+
+    :deep(.el-button [class*=el-icon]+span) {
+        margin-left: 3px;
+    }
+
+    .el-button:hover,
+    .el-button:focus {
+        background-color: #fff;
+        border-color: #cccccc;
+    }
+
+    .el-button--primary {
+        background: linear-gradient(90deg, #0080ff 0%, #4cdcec 100%);
+        border: 0;
+        color: #fff;
+    }
+
+    .el-input {
+        height: 32px;
+        // border: 1px solid;
+        // border-color: #dcdfe6;
+        border-radius: 3px;
+    }
+
+    &-top {
+        .draft_btn {
+            color: #212930;
+        }
+    }
+
+    &-center {
+        width: 100%;
+        height: 186px;
+        background: #ffffff;
+        border: 1px solid;
+        border-color: #e1e2e2;
+        border-radius: 2px;
+        padding: 15px;
+        margin-top: 11px;
+
+        .center_box {
+            display: flex;
+            align-items: center;
+
+            .center_input {
+                flex: 1;
+                margin-right: 10px;
+
+                .select_obj {
+                    :deep(.el-input__wrapper) {
+                        cursor: pointer;
+
+                        .el-input__inner {
+                            cursor: pointer;
+                        }
+                    }
+
+
+                }
+            }
+        }
+
+        .center_box:not(:last-child) {
+            margin-bottom: 10px;
+        }
+
+        .center_title-grade {
+            .el-select {
+                width: 173px;
+            }
+        }
+
+        .center_receive-btn {
+            button {
+                width: 84px;
+            }
+
+            .el-button+.el-button {
+                margin-left: 5px;
+            }
+        }
+
+        .center_upload {
+            button {
+                width: 60px;
+            }
+
+            .upload-demo {
+                display: flex;
+
+                :deep(.el-upload-list) {
+                    margin: 0;
+                    display: flex;
+                    align-items: center;
+                    margin-left: 5px;
+                    overflow: hidden;
+
+                    li {
+                        margin-bottom: 0;
+                        height: 100%;
+                        color: #333333;
+                        font-size: 12px;
+                        margin-right: 10px;
+
+                        .diy_upload {
+                            width: 100%;
+                            background: #e8f2ff;
+                            height: 100%;
+                            display: flex;
+                            align-items: center;
+                            padding-left: 5px;
+
+                            .upload_append {
+                                color: #3286ed;
+                                margin-right: 3px;
+                            }
+
+                            .upload_del {
+                                color: #999;
+                                display: block;
+                                height: 12px;
+                                margin-left: 5px;
+                                cursor: pointer;
+                            }
+
+                            .upload_docu {
+                                padding-bottom: 1px;
+                            }
+                        }
+
+                        .el-icon--close {
+                            display: inline-flex;
+                            right: -20px;
+                            padding: 0 5px;
+                            background: #e8f2ff;
+                            opacity: 1;
+                            height: 100%;
+                        }
+                    }
+
+                    li:hover {
+                        background: transparent;
+                    }
+                }
+            }
+
+
+        }
+
+        .center_name {
+            width: 70px;
+            text-align: right;
+            color: #333333;
+            font-size: 14px;
+        }
+    }
+}

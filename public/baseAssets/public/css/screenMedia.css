@@ -1,0 +1,29 @@
+/*1rem = 20px*/
+html {font-size: 20px;}
+
+@media (max-width: 1024px){
+    html{font-size: 10px}
+}/*<1024的设备*/
+
+@media (min-width: 1024px){
+    html{font-size: 10.66px}
+} /*>=1024的设备*/
+
+@media (min-width: 1280px) {
+    html{font-size: 13.33px;}
+} /*>=1280的设备*/
+
+@media (min-width: 1366px) {
+    html{font-size: 14.23px;}
+}
+
+@media (min-width: 1440px) {
+    html{font-size: 15px}
+}
+
+@media (min-width: 1680px) {
+    html{font-size: 17.5px;}
+}
+@media (min-width: 1920px) {
+    html{font-size: 20px;}
+}

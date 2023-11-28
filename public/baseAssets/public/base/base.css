@@ -1,0 +1,815 @@
+[v-cloak], [hidden], summary, template {
+    display: none;
+}
+
+/*===== 清除默认的margin的属性值 =====*/
+body, blockquote, dd, dl, figure, form, pre, h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    padding: 0
+}
+
+/*===== 统一设置列表的margin和padding，以及列表表形式 =====*/
+menu, ul, ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+fieldset {
+    padding: 0.35em 0.75em 0.625em;
+}
+
+/*===== 全局定义字体以及页面背景 =====*/
+body {
+    line-height: 1.15; /* 1 */
+    font-size: 0.7rem;
+    -webkit-text-size-adjust: 100%; /* 2 */
+    background-color: #FFFFFF;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-family: Microsoft YaHei, Microsoft YaHei-Bold;
+    /*-moz-user-select:none;*/ /* Firefox私有属性 */
+    /*-webkit-user-select:none;*/ /* WebKit内核私有属性 */
+    /*-ms-user-select:none;*/ /* IE私有属性(IE10及以后) */
+    /*-khtml-user-select:none;*/ /* KHTML内核私有属性 */
+    /*-o-user-select:none;*/ /* Opera私有属性 */
+    /*user-select:none;*/ /* CSS3属性 */
+}
+
+/*1rem = 20px*/
+html {
+    font-size: 20px;
+}
+
+/* 设置字体大小 */
+@media (-webkit-min-device-pixel-ratio: 1.1),(min-device-pixel-ratio: 1.1) {
+    html {
+        font-size: 18.18px
+    }
+}
+
+@media (-webkit-min-device-pixel-ratio: 1.25),(min-device-pixel-ratio: 1.25) {
+    html {
+        font-size: 16px
+    }
+}
+
+@media (-webkit-min-device-pixel-ratio: 1.5),(min-device-pixel-ratio: 1.5) {
+    html {
+        font-size: 16px
+    }
+}
+
+@media (-webkit-min-device-pixel-ratio: 2),(min-device-pixel-ratio: 2) {
+    html {
+        font-size: 20px
+    }
+}
+
+@media (-webkit-min-device-pixel-ratio: 3),(min-device-pixel-ratio: 3) {
+    html {
+        font-size: 20px
+    }
+}
+
+input[type="button"], input[type="submit"], input[type="reset"] {
+    font-size: 16px;
+}
+/** 滚动条 **/
+
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+::-webkit-scrollbar-button:vertical {
+    display: none;
+}
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+    background-color: rgba(0,0,0, 0.2);
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 0;
+    background-color: rgba(0,0,0,0.2);
+}
+
+::-webkit-scrollbar-thumb:vertical:hover {
+    background-color: rgba(0,0,0,0.2);
+}
+
+::-webkit-scrollbar-thumb:vertical:active {
+    background-color: rgba(0,0,0,0.2);
+}
+
+
+/* 设置字体大小，这部分跟前面写在一起，IE6中会无效 */
+/*===== 字体控制 =====*/
+body, button, input, optgroup, option, pre, select, textarea {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro SC', 'SF Pro Text', 'Helvetica Neue', Helvetica, 'PingFang SC', 'Segoe UI', Roboto, 'Hiragino Sans GB', arial, 'microsoft yahei ui', 'Microsoft YaHei', SimSun, sans-serif
+}
+
+/*===== 设置iframe的背景色以及去除个别浏览器iframe底部的几个像素 =====*/
+iframe {
+    background-color: #FFFFFF;
+    vertical-align: middle;
+}
+
+/*===== 设置文本链接样式 =====*/
+a {
+    color: #000000;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+    color: #FF0000;
+}
+
+/*===== 去除个别浏览器图片底部的几个像素，以及设置图片形式链接无边框 =====*/
+img {
+    vertical-align: middle;
+}
+
+a img {
+    border: 0 none;
+}
+
+legend {
+    color: windowtext
+}
+
+button, input.ie6 {
+    overflow: visible;
+    padding: .1em .25em;
+    cursor: pointer
+}
+
+input[type=button], input[type=reset], input[type=submit] {
+    overflow: visible;
+    padding: .1em .25em;
+    cursor: pointer
+}
+
+input[type=text], select, textarea {
+    background-color: #fff
+}
+
+select {
+    border: 1px inset
+}
+
+textarea {
+    overflow: auto;
+    vertical-align: text-bottom;
+    border: 1px solid;
+    resize: vertical
+}
+
+/*===== 设置表格元素的样式 =====*/
+table {
+    border-spacing: 0;
+}
+
+/* 合并表格的间隙，去掉单元格之间的间距，如有需要合并单元格为细线表格，可增加 border-collapse:collapse; */
+td, th, caption {
+    padding: 0;
+}
+
+/* 去除单元格以及caption表头的padding值 */
+button,
+input[type='submit'],
+input[type='button'] {
+    /* 可点击小手 */
+    cursor: pointer;
+}
+
+/* 取消部分浏览器数字输入控件的操作按钮 apperance可以改变控件的外观。 */
+input[type='number'] {
+    -moz-appearance: textfield;
+}
+
+input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button {
+    margin: 0;
+    -webkit-appearance: none;
+}
+
+/**
+ * 删除Firefox中的内边框和填充。
+ */
+button::-moz-focus-inner, [type="button"]::-moz-focus-inner, [type="reset"]::-moz-focus-inner,
+[type="submit"]::-moz-focus-inner {
+    border-style: none;
+    padding: 0;
+}
+
+body, #app, html {
+    width: 100%;
+    /* 与浏览器窗口高度一致 */
+    height: 100%;
+    -webkit-overflow-scrolling: touch;
+    overflow-scrolling: touch;
+    word-break: break-all;
+    padding: 0;
+    margin: 0;
+    position: relative;
+}
+.pointer{
+    cursor: pointer;
+}
+/*CSS3 transform 实现 类似原生效果的 1px 边框*/
+.border-1px {
+    position: relative;
+    width: 100%;
+}
+
+.border-1px:after {
+    position: absolute;
+    content: '';
+    width: 200%;
+    left: -50%;
+    top: 0;
+    -webkit-transform: scale(0.5);
+    transform: scale(0.5);
+    border-bottom: 1px solid #0c8ced;
+}
+
+/*定义基础类复用样式*/
+.flex-sa {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-justify-content: space-around;
+    justify-content: space-around;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.flex-sb {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.flex-ct {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-justify-content: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.flex-fs {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-justify-content: flex-start;
+    justify-content: flex-start;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.text-elps {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.text-elps-2 {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.text-center {
+    text-align: center!important;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.fl {
+    float: left;
+}
+
+.fr {
+    float: right;
+}
+
+.clear {
+    clear: both;
+}
+
+.corfff {
+    color: #FFFFFF;
+}
+
+.cor000 {
+    color: #000000;
+}
+
+.bgcolor {
+    background-color: #f3f3f3;
+}
+
+/*移动端常用灰色*/
+.bgfff {
+    background-color: #FFFFFF;
+}
+
+.borBottom {
+    border-bottom: 1px solid #EEEEEE;
+}
+
+/*底线颜色*/
+.borTop {
+    border-top: 1px solid #EEEEEE;
+}
+
+/*底线颜色*/
+.f12 {
+    font-size: 12px;
+}
+
+.f14 {
+    font-size: 14px;
+}
+
+.f16 {
+    font-size: 16px;
+}
+
+.f18 {
+    font-size: 18px;
+}
+
+.f20 {
+    font-size: 20px;
+}
+
+.f22 {
+    font-size: 22px;
+}
+
+.f24 {
+    font-size: 24px;
+}
+
+.f26 {
+    font-size: 26px;
+}
+
+.f28 {
+    font-size: 28px;
+}
+
+.f30 {
+    font-size: 30px;
+}
+
+.f36 {
+    font-size: 36px;
+}
+
+.c333 {
+    color: #333333;
+}
+
+.c666 {
+    color: #666666;
+}
+
+.c999 {
+    color: #999999;
+}
+
+.cfff {
+    color: #FFFFFF;
+}
+
+.mp00 {
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-right: 0;
+    margin-left: 0 !important;
+}
+
+/* loader 动画 */
+.chart-loader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 909;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    transition: all .8s;
+}
+
+.chart-loader .loader-tips {
+    position: absolute;
+    left: calc(50% - 100px);
+    top: calc(50% + 60px);
+    width: 200px;
+    height: 60px;
+    text-align: center;
+    font-size: 1rem;
+    color: #fff;
+}
+
+.chart-loader .loader {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 60px;
+    height: 60px;
+    margin: -30px 0 0 -30px;
+    border: 3px solid transparent;
+    border-top-color: #3498db;
+    border-radius: 50% !important;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+}
+
+.chart-loader .loader:before {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 5px;
+    right: 5px;
+    bottom: 5px;
+    border: 3px solid transparent;
+    border-top-color: #e74c3c;
+    border-radius: 50% !important;
+    -webkit-animation: spin 3s linear infinite;
+    animation: spin 3s linear infinite;
+}
+
+.chart-loader .loader:after {
+    content: "";
+    position: absolute;
+    top: 9px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    border: 3px solid transparent;
+    border-top-color: #f9c922;
+    border-radius: 50% !important;
+    -webkit-animation: spin 1.5s linear infinite;
+    animation: spin 1.5s linear infinite;
+}
+
+.chart-done .chart-loader {
+    display: none;
+}
+
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        transform: rotate(0deg)
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        -ms-transform: rotate(360deg);
+        transform: rotate(360deg)
+    }
+}
+
+@keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        transform: rotate(0deg)
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        -ms-transform: rotate(360deg);
+        transform: rotate(360deg)
+    }
+}
+
+/* 可以设置不同的进入和离开动画 */
+/* 设置持续时间和动画函数 */
+.slide-fade-enter-active {
+    transition: all .2s ease;
+}
+
+.slide-fade-leave-active {
+    transition: all .2s ease;
+}
+
+.slide-fade-enter, .slide-fade-leave-to {
+    transform: translateX(50px);
+    opacity: 0;
+}
+
+@font-face {
+    font-family: 'DS-Digital';
+    src: url('DS-DigitalBoldItalic.ttf');
+}
+/**rachel 20200629 */
+.el-popper,.el-message{
+    z-index:222222222222222!important;
+}
+.el-table thead th{
+    font-weight: 800!important;
+    padding: 0px!important;
+    height: 40px!important;
+}
+
+.width5{width: 5%!important;}
+.width10{width: 10%!important;}
+.width15{width: 15%!important;}
+.width20{width: 20%!important;}
+.width25{width: 25%!important;}
+.width30{width: 30%!important;}
+.width35{width: 35%!important;}
+.width40{width: 40%!important;}
+.width45{width: 45%!important;}
+.width50{width: 50%!important;}
+.width55{width: 55%!important;}
+.width60{width: 60%!important;}
+.width65{width: 65%!important;}
+.width70{width: 70%!important;}
+.width75{width: 75%!important;}
+.width80{width: 80%!important;}
+.width85{width: 85%!important;}
+.width90{width: 90%!important;}
+.width95{width: 95%!important;}
+.width100{width: 100%!important;}
+
+.ht-widget-contextmenu{z-index: 200!important;}
+
+/* 公用布局 用于二开页面适应小安易联 */
+.OldsearchBox .el-form-item{
+    margin-bottom: 5px!important;
+}
+.OldfullBox {
+    padding: 10px;
+    box-sizing: border-box;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+    flex-wrap: nowrap;
+    flex:1;
+}
+.mas-iframe{
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+.OldsearchBox .searchForm{
+    padding: 8px 10px;
+}
+.OldsearchBox {
+    width: 100%;
+    padding: 5px 10px;
+    box-sizing: border-box;
+    background-color: #fff;
+    border-radius: 2px;
+    border: 1px solid #cfcfcf;
+    height: auto;
+    margin-bottom: 5px;
+}
+.OldmiddleBox{
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #cfcfcf;
+    background-color: #fff;
+    flex:1;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+    flex-wrap: nowrap;
+    max-height: 100%;
+    overflow: hidden;
+}
+.OldfooterBox{
+    width: 100%;
+    box-sizing: border-box;
+    border-bottom: 1px solid #cfcfcf;
+    border-right: 1px solid #cfcfcf;
+    border-left: 1px solid #cfcfcf;
+    background-color: #fff;
+    height: 40px;
+    padding: 0 20px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+.OldmiddleBox .dataTitle{
+    height: 32px;
+    line-height: 32px;
+    width: 100%;
+    border-bottom: 1px solid #ccc;
+    color: #666;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: bold;
+    padding:0 9px;
+    font-size: 12px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+.OldmiddleBox .dataTitle-name{
+    flex: 1;
+}
+.OldmiddleBox .dataTitle-right{
+    flex: 3;
+    height: 100%;
+}
+.OldmiddleBox .dataTitle-table{
+    flex:1;
+    width: 100%;
+    max-height: calc(100% - 33px);
+}
+.mas-content{
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+}
+.OldfullBox .footerBox .foot{
+    text-align: right;
+}
+/* 彈窗皮肤 */
+.screen-class .layui-layer-title{
+    /* background-color:#002049!important; */
+    /* color: #fff; */
+}
+.screen-class .layui-layer-setwin a{
+    /* background-color:#fff!important;
+    background-position: 1px -40px; */
+}
+.screen-class .layui-layer-setwin .layui-layer-close1{
+    /* background-position: -187px -38px!important; */
+}
+.screen-class{
+    box-shadow:5px 5px 15px #EBEEF5!important;
+    border: 1px #cfcfcf solid;
+}
+/*解决layer全屏*/
+.layui-layer-title+.layui-layer-content, .layui-layer-title+.layui-layer-content iframe{
+    /* min-height: calc(100% - 43px)!important;
+    height: calc(100% - 43px)!important; */
+}
+.redText{
+    color: #F56C6C;
+}
+.blue {
+    color: #0080FF;
+}
+.bgred{
+    background-color: #F56C6C!important;
+    border-color: #F56C6C!important;
+}
+
+/* 公用布局 用于二开页面适应小安易联 */
+.fullBox {
+    position: relative;
+    padding: 10px;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+.searchBox {
+    width: 100%;
+    padding: 5px 10px;
+    box-sizing: border-box;
+    background-color: #fff;
+    border-radius: 2px;
+    border: 1px solid #cfcfcf;
+    height: auto;
+    margin-bottom: 5px;
+}
+.middleBox{
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #cfcfcf;
+    background-color: #fff;
+    flex:1;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+    flex-wrap: nowrap;
+    max-height: 100%;
+    overflow: hidden;
+}
+.footerBox{
+    width: 100%;
+    box-sizing: border-box;
+    border-bottom: 1px solid #cfcfcf;
+    border-right: 1px solid #cfcfcf;
+    border-left: 1px solid #cfcfcf;
+    background-color: #fff;
+    height: 40px;
+}
+.middleBox .dataTitle{
+    height: 32px;
+    line-height: 32px;
+    width: 100%;
+    border-bottom: 1px solid #ccc;
+    color: #666;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: bold;
+    padding:0 9px;
+    font-size: 12px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+.middleBox .dataTitle-name{
+    flex: 1;
+}
+.middleBox .dataTitle-right{
+    flex: 3;
+    height: 100%;
+}
+.middleBox .dataTitle-table{
+    flex:1;
+    width: 100%;
+    max-height: calc(100% - 33px);
+}
+/* 2021-04-05 新增 */
+#app>.appTree{
+    border-right: 5px solid #fff!important;
+    height: 100%;
+}
+.dataTitle-table .show-operation{
+    padding: 8px 25px!important;
+    align-items: center;
+}
+.OldmiddleBox .dataTitle-table .table-box{
+    height: calc(100% - 46px)!important;
+}
+#app .treeBody{
+    border: 1px solid #cfcfcf;
+}
+
+.mas-content .OldfullBox{
+    background-color: #fff;
+}
+.appTree+.OldfullBox{
+    width: calc(100% - 15rem - 28px );
+}
+.appTree{
+    background-color: #fff!important;
+    margin-right: 0!important;
+    box-sizing: border-box;
+    padding: 10px 0;
+    height: 100%;
+}

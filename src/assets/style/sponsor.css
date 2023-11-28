@@ -1,0 +1,126 @@
+.sponsor_vessel {
+  padding: 15px 20px;
+  background: #f7f9f9;
+  height: calc(100% - 30px);
+  width: calc(100% - 40px);
+}
+.sponsor_vessel .el-button {
+  height: 30px;
+  font-size: 12px;
+  color: #333333;
+}
+.sponsor_vessel :deep(.el-button [class*=el-icon]+span) {
+  margin-left: 3px;
+}
+.sponsor_vessel .el-button:hover,
+.sponsor_vessel .el-button:focus {
+  background-color: #fff;
+  border-color: #cccccc;
+}
+.sponsor_vessel .el-button--primary {
+  background: linear-gradient(90deg, #0080ff 0%, #4cdcec 100%);
+  border: 0;
+  color: #fff;
+}
+.sponsor_vessel .el-input {
+  height: 32px;
+  border-radius: 3px;
+}
+.sponsor_vessel-top .draft_btn {
+  color: #212930;
+}
+.sponsor_vessel-center {
+  width: 100%;
+  height: 186px;
+  background: #ffffff;
+  border: 1px solid;
+  border-color: #e1e2e2;
+  border-radius: 2px;
+  padding: 15px;
+  margin-top: 11px;
+}
+.sponsor_vessel-center .center_box {
+  display: flex;
+  align-items: center;
+}
+.sponsor_vessel-center .center_box .center_input {
+  flex: 1;
+  margin-right: 10px;
+}
+.sponsor_vessel-center .center_box .center_input .select_obj :deep(.el-input__wrapper) {
+  cursor: pointer;
+}
+.sponsor_vessel-center .center_box .center_input .select_obj :deep(.el-input__wrapper) .el-input__inner {
+  cursor: pointer;
+}
+.sponsor_vessel-center .center_box:not(:last-child) {
+  margin-bottom: 10px;
+}
+.sponsor_vessel-center .center_title-grade .el-select {
+  width: 173px;
+}
+.sponsor_vessel-center .center_receive-btn button {
+  width: 84px;
+}
+.sponsor_vessel-center .center_receive-btn .el-button + .el-button {
+  margin-left: 5px;
+}
+.sponsor_vessel-center .center_upload button {
+  width: 60px;
+}
+.sponsor_vessel-center .center_upload .upload-demo {
+  display: flex;
+}
+.sponsor_vessel-center .center_upload .upload-demo :deep(.el-upload-list) {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  margin-left: 5px;
+  overflow: hidden;
+}
+.sponsor_vessel-center .center_upload .upload-demo :deep(.el-upload-list) li {
+  margin-bottom: 0;
+  height: 100%;
+  color: #333333;
+  font-size: 12px;
+  margin-right: 10px;
+}
+.sponsor_vessel-center .center_upload .upload-demo :deep(.el-upload-list) li .diy_upload {
+  width: 100%;
+  background: #e8f2ff;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding-left: 5px;
+}
+.sponsor_vessel-center .center_upload .upload-demo :deep(.el-upload-list) li .diy_upload .upload_append {
+  color: #3286ed;
+  margin-right: 3px;
+}
+.sponsor_vessel-center .center_upload .upload-demo :deep(.el-upload-list) li .diy_upload .upload_del {
+  color: #999;
+  display: block;
+  height: 12px;
+  margin-left: 5px;
+  cursor: pointer;
+}
+.sponsor_vessel-center .center_upload .upload-demo :deep(.el-upload-list) li .diy_upload .upload_docu {
+  padding-bottom: 1px;
+}
+.sponsor_vessel-center .center_upload .upload-demo :deep(.el-upload-list) li .el-icon--close {
+  display: inline-flex;
+  right: -20px;
+  padding: 0 5px;
+  background: #e8f2ff;
+  opacity: 1;
+  height: 100%;
+}
+.sponsor_vessel-center .center_upload .upload-demo :deep(.el-upload-list) li:hover {
+  background: transparent;
+}
+.sponsor_vessel-center .center_name {
+  width: 70px;
+  text-align: right;
+  color: #333333;
+  font-size: 14px;
+}

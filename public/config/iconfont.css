@@ -1,0 +1,79 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 4204193 */
+  src: url('iconfont.woff2?t=1691572027346') format('woff2'),
+       url('iconfont.woff?t=1691572027346') format('woff'),
+       url('iconfont.ttf?t=1691572027346') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-node-sendread:before {
+  content: "\e66b";
+}
+
+.icon-layout-bottom:before {
+  content: "\e65c";
+}
+
+.icon-layout-horizonta:before {
+  content: "\e65d";
+}
+
+.icon-node-condition:before {
+  content: "\e65e";
+}
+
+.icon-layout-middle:before {
+  content: "\e65f";
+}
+
+.icon-line:before {
+  content: "\e660";
+}
+
+.icon-layout-top:before {
+  content: "\e661";
+}
+
+.icon-layout-vertical:before {
+  content: "\e662";
+}
+
+.icon-node-sonwf:before {
+  content: "\e663";
+}
+
+.icon-node-stop:before {
+  content: "\e664";
+}
+
+.icon-node-start:before {
+  content: "\e665";
+}
+
+.icon-checker:before {
+  content: "\e666";
+}
+
+.icon-undo:before {
+  content: "\e667";
+}
+
+.icon-authority:before {
+  content: "\e668";
+}
+
+.icon-redo:before {
+  content: "\e669";
+}
+
+.icon-preview:before {
+  content: "\e66a";
+}
+

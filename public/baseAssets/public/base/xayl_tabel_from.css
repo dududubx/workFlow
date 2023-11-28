@@ -1,0 +1,37 @@
+/* 小安易联 from 样式同步 基于element-ui样式修改 */
+.el-input__inner {
+  border: 1px solid #cccccc;
+  border-radius: 1px;
+}
+.el-form-item__label {
+  font-size: 12px;
+  color: #333333;
+}
+.el-form--inline .el-form-item {
+  margin-right: 24px;
+  margin-bottom: 2px;
+}
+/* 小安易联tabel 样式同步 基于element-ui样式修改 */
+.el-table {
+  border-top-color: #cfcfcf;
+}
+.el-table:before {
+  background-color: #cfcfcf;
+}
+.el-table tbody tr:hover > td {
+  background-color: #eeeeee !important;
+}
+.el-table th > .cell {
+  font-weight: 400;
+}
+.el-table thead th {
+  font-size: 14px;
+  color: #333333;
+  padding: 5px 0px;
+  background-color: #f8f8f8;
+  border-color: #cfcfcf !important;
+}
+.el-table tbody td {
+  padding: 5px 0px;
+  border-color: #cfcfcf;
+}

@@ -1,0 +1,121 @@
+{
+  "id": "4204193",
+  "name": "小安易联_流程设计器",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "36846470",
+      "name": "node-sendread",
+      "font_class": "node-sendread",
+      "unicode": "e66b",
+      "unicode_decimal": 58987
+    },
+    {
+      "icon_id": "36846193",
+      "name": "layout-bottom",
+      "font_class": "layout-bottom",
+      "unicode": "e65c",
+      "unicode_decimal": 58972
+    },
+    {
+      "icon_id": "36846194",
+      "name": "layout-horizonta",
+      "font_class": "layout-horizonta",
+      "unicode": "e65d",
+      "unicode_decimal": 58973
+    },
+    {
+      "icon_id": "36846195",
+      "name": "node-condition",
+      "font_class": "node-condition",
+      "unicode": "e65e",
+      "unicode_decimal": 58974
+    },
+    {
+      "icon_id": "36846196",
+      "name": "layout-middle",
+      "font_class": "layout-middle",
+      "unicode": "e65f",
+      "unicode_decimal": 58975
+    },
+    {
+      "icon_id": "36846197",
+      "name": "line",
+      "font_class": "line",
+      "unicode": "e660",
+      "unicode_decimal": 58976
+    },
+    {
+      "icon_id": "36846198",
+      "name": "layout-top",
+      "font_class": "layout-top",
+      "unicode": "e661",
+      "unicode_decimal": 58977
+    },
+    {
+      "icon_id": "36846200",
+      "name": "layout-vertical",
+      "font_class": "layout-vertical",
+      "unicode": "e662",
+      "unicode_decimal": 58978
+    },
+    {
+      "icon_id": "36846201",
+      "name": "node-sonwf",
+      "font_class": "node-sonwf",
+      "unicode": "e663",
+      "unicode_decimal": 58979
+    },
+    {
+      "icon_id": "36846203",
+      "name": "node-stop",
+      "font_class": "node-stop",
+      "unicode": "e664",
+      "unicode_decimal": 58980
+    },
+    {
+      "icon_id": "36846204",
+      "name": "node-start",
+      "font_class": "node-start",
+      "unicode": "e665",
+      "unicode_decimal": 58981
+    },
+    {
+      "icon_id": "36846205",
+      "name": "checker",
+      "font_class": "checker",
+      "unicode": "e666",
+      "unicode_decimal": 58982
+    },
+    {
+      "icon_id": "36846206",
+      "name": "undo",
+      "font_class": "undo",
+      "unicode": "e667",
+      "unicode_decimal": 58983
+    },
+    {
+      "icon_id": "36846207",
+      "name": "authority",
+      "font_class": "authority",
+      "unicode": "e668",
+      "unicode_decimal": 58984
+    },
+    {
+      "icon_id": "36846208",
+      "name": "redo",
+      "font_class": "redo",
+      "unicode": "e669",
+      "unicode_decimal": 58985
+    },
+    {
+      "icon_id": "36846410",
+      "name": "preview",
+      "font_class": "preview",
+      "unicode": "e66a",
+      "unicode_decimal": 58986
+    }
+  ]
+}

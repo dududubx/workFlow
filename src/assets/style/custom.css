@@ -1,0 +1,169 @@
+.djs-palette{
+    height: 330px;
+    width: 60px;
+    position: fixed !important;
+    top: 65px !important;
+}
+.djs-palette-entries{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    background:#ffffff;
+    border-radius:4px;
+    box-shadow:0px 0px 6px rgba(0, 0, 0, 0.1);
+    flex-direction: column;
+}
+.group{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.djs-palette .entry{
+    height: 30px !important;
+    width: 30px !important;
+    line-height: 30px !important;
+}
+/* .djs-group{
+    stroke-opacity: 0;
+} */
+.taskContainer{
+    width: calc(100% - 4px);
+    height: calc(100% - 4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+    border: 2px solid #5292e0;
+}
+.otherContainer{
+    width: 100%;
+    height: 100%;
+}
+.svgIcon{
+    height: 35px;
+    width: 50px;
+    flex-shrink: 0;
+}
+.otherSvg{
+    height: 53px;
+    width: 53px;
+}
+.taskName{
+    font-size: 14px;
+    color: #333;
+    width: 90px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.gateContainer{
+    width: 68%;
+    height:68%;
+    transform: translate(20%, 20%) rotate(45deg);
+    border: 2px solid #212930;
+    font-size: 12px;
+    text-align: center;
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+    position: relative;
+}
+.gateName{
+    transform: rotate(-45deg);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    position: absolute;
+    width: 79px;
+}
+.gateSvg{
+    width: 100%;
+    height: 100%;
+}
+.icon-custom {
+    /* 定义一个公共的类名 */
+    border-radius: 50%;
+    background-size: 65%;
+    background-repeat: no-repeat;
+    background-position: center;
+    padding-top: 15px;
+    
+}
+.djs-context-pad .entry{
+    width: 30px !important;
+    height: 30px !important;
+    
+}
+.bpmn-icon-trash{
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    color: #ff4747;
+}
+.padIcon{
+    width: 100%;
+    height: 100%;
+}
+.djs-context-pad{
+    border: 1px solid #5292e0;
+    padding: 5px;
+    /* width: 65px; */
+    display: none !important;
+    background-color: #ffffff;
+}
+.djs-context-pad .group{
+    display: block;
+    /* text-align: center; */
+}
+.djs-context-pad .icon-custom{
+    padding: 0;
+}
+.startCpad{
+    width: 65px;
+}
+.noalignPad{
+    display: block !important;
+}
+.selectCanvas{
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+}
+.bjs-powered-by{
+    display: none;
+}
+.bjs-breadcrumbs{
+    display: none;
+}
+.djs-parent{
+    overflow: auto !important;
+}
+.djs-parent svg[data-element-id='Process_1']{
+    width: 500% !important;
+    height: 500% !important;
+    overflow: scroll !important;
+}
+#canvas{
+    overflow: scroll !important;
+}
+.djs-minimap{
+    position: fixed !important;
+    /* right: 480px !important; */
+    top: 60px !important;
+}
+.djs-minimap.open .toggle{
+    display: none;
+}
+.djs-minimap:not(.open) .toggle{
+    display: none;
+}
+/* .djs-label{
+    display: none;
+} */

@@ -1,0 +1,157 @@
+.flowConfig {
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+
+    .flowForm {
+        height: 402px;
+        padding: 10px 15px;
+        :deep(.el-form-item--small .el-form-item__label) {
+            font-size: 14px;
+            color: rgba(51, 51, 51, 1);
+            height: 32px;
+            line-height: 32px;
+        }
+
+        :deep(.el-form) {
+            .el-form-item--small {
+                margin-bottom: 15px;
+            }
+
+            .el-input--small {
+                width: 100%;
+                height: 32px;
+                font-size: 14px;
+            }
+
+            .el-input__wrapper {
+                border-radius: 3px;
+            }
+
+            .el-checkbox.el-checkbox--small {
+                .el-checkbox__inner {
+                    width: 14px;
+                    height: 14px;
+
+                }
+
+                .el-checkbox__input.is-checked .el-checkbox__inner {
+                    background-color: #3286ed;
+                }
+
+                .el-checkbox__inner::after {
+                    width: 4px;
+                    height: 7px;
+                    left: 3px;
+                }
+
+                .el-checkbox__label {
+                    font-size: 13px;
+                    color: #333;
+                }
+
+                .el-checkbox__input.is-checked+.el-checkbox__label {
+                    color: #0080ff;
+                }
+            }
+
+            .switch_item {
+                margin-bottom: 0;
+
+                .el-form-item__content {
+                    justify-content: flex-end;
+
+                    .el-switch--small {
+                        height: 20px;
+                        width: 35px;
+
+                        .el-switch__core {
+                            height: 20px;
+                            min-width: 35px;
+                            border-radius: 12px;
+                            background: #e5e5e5;
+
+                            .el-switch__action {
+                                width: 14px;
+                                height: 14px;
+                            }
+                        }
+
+                    }
+
+                    .el-switch--small.is-checked {
+                        .el-switch__core {
+                            background: linear-gradient(90deg, #0080ff 0%, #4cdcec 100%) !important;
+
+                            .el-switch__action {
+                                left: calc(100% - 15px);
+                            }
+                        }
+                    }
+
+                }
+            }
+
+            .switch_tip {
+                height: 16px;
+                font-family: Microsoft YaHei;
+                color: #999999;
+                font-size: 12px;
+                padding-left: 10px;
+                margin-bottom: 15px;
+            }
+
+            .remark_item {
+                margin-bottom: 0;
+                .el-form-item__label {
+                    padding-left: 10px;
+                }
+
+                .el-input--small {
+                    // width: 293px;
+                    flex: 1;
+                    // height: 60px;
+                }
+                .el-textarea__inner{
+                    // min-height: 60px !important;
+                }
+            }
+
+            .form_Top {
+                border-bottom: 1px solid #e4e7ed;
+                margin-bottom: 15px;
+            }
+        }
+    }
+    :deep(.el-select--small){
+        width: 100%;
+         .el-input{
+            width: 100% !important;
+        }
+    }
+    :deep(.el-select){
+        width: 100%;
+         .el-input{
+            width: 100% !important;
+        }
+    }
+    .flowCollapse{
+        border-color: #e4e7ed;
+        :deep(.el-collapse){
+            .el-collapse-item__header{
+                height: 44px;
+                font-weight:700;
+                color:#666666;
+                font-size:14px;
+                flex-direction: row-reverse;
+                justify-content: flex-end;
+                padding-left: 15px;
+                .el-collapse-item__arrow{
+                    margin: 0;
+                    margin-right: 8px;
+                }
+            }
+            
+        }
+    }
+}
