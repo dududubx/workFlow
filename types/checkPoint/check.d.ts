@@ -8,7 +8,9 @@ declare interface parentCheckData {
     writeBack?: writeBack[],
     adConfig?: adConfig,
     titleConfig?: titleConfig[],
-    titleWriteBack?: titleWriteBack[]
+    titleWriteBack?: titleWriteBack[],
+    advanceData?: advancedForm,
+    childFlow?: string
 }
 
 declare interface checkData {
@@ -26,7 +28,11 @@ declare interface checkData {
     manualTitle?: boolean,
     appointChecker?: boolean,
     auditorAgainType?: string,
-    auditorType?: string
+    auditorType?: string,
+    isSaveDraftValid?: boolean,
+    childType?: string,
+    childFlow?: any,
+    childFlowName?: string
 }
 declare interface checkerArr {
     seletItem: string,
@@ -65,11 +71,13 @@ declare interface checkTime {
     notificationStrategy: string
 }
 declare interface agreeBtn {
+    name: string,
     hiddenBtn: boolean,
     signature: boolean,
     nextChecker: string,
 }
 declare interface disagreeBtn {
+    name: string,
     hiddenBtn: boolean,
     signature: boolean,
     nextChecker: string,

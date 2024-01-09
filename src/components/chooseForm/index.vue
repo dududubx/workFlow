@@ -7,7 +7,7 @@
                     <div class="top_text">
                         {{ maslg('表单分类:') }}
                     </div>
-                    <el-select v-model="chooseCategory" :placeholder="maslg('请选择表单分类')" class="top_input">
+                    <el-select v-model="chooseCategory" :placeholder="maslg('请选择表单分类')" class="top_input" clearable>
                         <el-option v-for="item in categorData" :key="item.F_ItemId" :label="item.F_ItemName"
                             :value="item.F_ItemValue"></el-option>
                     </el-select>
@@ -16,8 +16,8 @@
                     <div class="top_text">
                         {{ maslg('表单名称:') }}
                     </div>
-                    <el-input v-regCharacter :maxlength="maxlength" v-model="chooseName" :placeholder="maslg('请输入表单名称')"
-                        class="top_input" clearable></el-input>
+                    <el-input v-regCharacter v-debounce="SearchClick" :maxlength="maxlength" v-model="chooseName"
+                        :placeholder="maslg('请输入表单名称')" class="top_input" clearable></el-input>
                 </div>
                 <div class="top_btn">
                     <el-button type="primary" class="search_btn searchform_btn" @click="SearchClick">{{
@@ -30,7 +30,7 @@
             </div>
             <el-table :data="tableData" border style="width: 100%" height="400" :show-overflow-tooltip="true"
                 header-row-class-name="checker_table" highlight-current-row @row-click="selectRow" ref="formTable"
-                v-loading="tableLoading">
+                v-loading="tableLoading" :empty-text="maslg('无数据')">
                 <el-table-column type="index" width="50" />
                 <el-table-column :prop="formName" :label="maslg('表单名称')"></el-table-column>
                 <el-table-column :prop="formNo" :label="maslg('表单代码')"></el-table-column>
@@ -158,6 +158,7 @@ const getCategoryData = () => {
     })
 }
 let formType = ''
+let originalrowsData;
 const paginationBox = ref()
 let original: pointFormData[] = []
 const openDialog = (val: string, ischange: boolean, rowsData: tableData, originalData: pointFormData[]) => {
@@ -183,6 +184,7 @@ const openDialog = (val: string, ischange: boolean, rowsData: tableData, origina
         //     paginationBox.value?.resetPage(params.page, params.rows)
         // }
         clickRowData = rowsData
+        originalrowsData = rowsData
         getData()
     }
     dialogFromVisible.value = true
@@ -210,7 +212,7 @@ const submitForm = () => {
             return item.formType == '2' ? clickRowData.ID == item.rowsData?.ID : item.formType == '1' ? clickRowData.F_Id == item.rowsData?.F_Id : undefined
         })
     }
-    if (find) {
+    if (find && originalrowsData.ID != clickRowData.ID) {
         return ElMessage({
             type: 'error',
             message: proxy?.maslg('表单已设置')

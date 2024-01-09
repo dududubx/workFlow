@@ -28,24 +28,24 @@
                 </el-form-item>
                 <el-form-item prop="agreeSQL"
                     :label="maslg(advanceData.hasOwnProperty('disagreeSQL') ? '同意SQL脚本' : 'SQL脚本')">
-                    <el-input v-regCharacter type="textarea" :autosize="{ minRows: 5 }" v-model="advanceData.agreeSQL"
+                    <el-input type="textarea" :autosize="{ minRows: 5 }" v-model="advanceData.agreeSQL"
                         :placeholder="maslg('请输入SQL脚本')"></el-input>
                 </el-form-item>
                 <el-form-item prop="disagreeSQL" :label="maslg('不同意SQL脚本')"
                     v-if="advanceData.hasOwnProperty('disagreeSQL')">
-                    <el-input v-regCharacter type="textarea" :autosize="{ minRows: 5 }" v-model="advanceData.disagreeSQL"
+                    <el-input type="textarea" :autosize="{ minRows: 5 }" v-model="advanceData.disagreeSQL"
                         :placeholder="maslg('请输入SQL脚本')"></el-input>
                 </el-form-item>
             </div>
             <div class="sql_container" v-if="advanceData.category == 'interface'">
                 <el-form-item prop="agreePort"
                     :label="maslg(advanceData.hasOwnProperty('disagreeSQL') ? '同意接口地址' : '接口地址')">
-                    <el-input v-regCharacter type="textarea" :autosize="{ minRows: 5 }" v-model="advanceData.agreePort"
+                    <el-input type="textarea" :autosize="{ minRows: 5 }" v-model="advanceData.agreePort"
                         :placeholder="maslg('请输入接口地址')"></el-input>
                 </el-form-item>
                 <el-form-item prop="disagreePort" :label="maslg('不同意接口地址')"
                     v-if="advanceData.hasOwnProperty('disagreePort')">
-                    <el-input v-regCharacter type="textarea" :autosize="{ minRows: 5 }" v-model="advanceData.disagreePort"
+                    <el-input type="textarea" :autosize="{ minRows: 5 }" v-model="advanceData.disagreePort"
                         :placeholder="maslg('请输入接口地址')"></el-input>
                 </el-form-item>
             </div>

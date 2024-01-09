@@ -34,8 +34,8 @@
                     <div class="condition-form" v-show="item.pattern">
                         <div class=" title">{{ maslg('关联主键字段') }}</div>
                         <div class="condition-form_select">
-                            <el-select v-model="item.primaryKeyField" :placeholder="maslg('请选择关联主键字段')">
-                                <el-option v-for="citem in item.compareFieldData" :key="citem.value" :value="citem.value"
+                            <el-select v-model="item.primaryKeyField" :placeholder="maslg('请选择关联主键字段')" clearable>
+                                <el-option v-for="citem in item.primaryFieldData" :key="citem.value" :value="citem.value"
                                     :label="citem.label"></el-option>
                             </el-select>
                         </div>
@@ -43,7 +43,7 @@
                     <div class="condition-form">
                         <div class=" title">{{ maslg('比较字段/控件') }}</div>
                         <div class="condition-form_select">
-                            <el-select v-model="item.compareField" :placeholder="maslg('请选择比较字段/控件')">
+                            <el-select v-model="item.compareField" :placeholder="maslg('请选择比较字段/控件')" clearable>
                                 <el-option v-for="citem in item.compareFieldData" :key="citem.value" :value="citem.value"
                                     :label="citem.label">
                                     <span style="float:left;color:#333333;font-size:13px;">{{ maslg(citem.label) }}</span>
@@ -56,7 +56,7 @@
                     <div class="condition-form">
                         <div class=" title">{{ maslg('比较类型') }}</div>
                         <div class="condition-form_select">
-                            <el-select v-model="item.compareType" :placeholder="maslg('请选择比较类型')">
+                            <el-select v-model="item.compareType" :placeholder="maslg('请选择比较类型')" clearable>
                                 <el-option v-for=" item in compareData" :label="maslg(item.label)" :key="item.value"
                                     :value="item.value"></el-option>
                             </el-select>
@@ -85,7 +85,7 @@
                     <div class="top_text">
                         {{ maslg('关键字查询:') }}
                     </div>
-                    <el-input v-regCharacter :maxlength="maxlength" v-model="param.tableName"
+                    <el-input v-regCharacter v-debounce="SearchClick" :maxlength="maxlength" v-model="param.tableName"
                         :placeholder="maslg('请输入表名或代码关键字')" clearable class="top_input"></el-input>
                 </div>
                 <div class="top_btn">
@@ -99,7 +99,7 @@
             </div>
             <el-table :data="tableData" border style="width: 100%" height="400" :show-overflow-tooltip="true"
                 header-row-class-name="checker_table" highlight-current-row @row-click="selectRow" ref="formTable"
-                v-loading="tableLoading">
+                v-loading="tableLoading" :empty-text="maslg('无数据')">
                 <el-table-column prop="tdescription" :label="maslg('表名称')"></el-table-column>
                 <el-table-column prop="name" :label="maslg('表代码')"></el-table-column>
             </el-table>
@@ -154,25 +154,27 @@ watch(() => props.clickElement, (val) => {
         collapseClick.value = '0'
         props.nodeList.map(item => {
             if (item.type == "bpmn:SequenceFlow" && item.target.id == props.clickElement.id) {
-                eleConfigData = item.source.configData
                 if (conditionData.value.formType && conditionData.value.formType != item.source.configData.pointFormData[0].formType) {
                     conditionData.value.conditionFormData = [{
-                        pattern: false,
+                        pattern: conditionData.value.formType == '2' ? false : true,
                         databaseTable: '',
                         primaryKeyField: '',
                         compareField: '',
                         compareType: '',
                         dataValue: '',
                         rowsData: {},
+                        primaryFieldData: [],
                         compareFieldData: [],
                     }]
                 }
-                conditionData.value.formType = item.source.configData.pointFormData[0].formType
                 nextTick(() => {
+                    eleConfigData = item.source.configData
+                    conditionData.value.formType = item.source.configData?.pointFormData[0].formType
                     let setFormField = conditionData.value.conditionFormData.find(item => {
                         return Object.keys(item.rowsData).length == 0
                     })
-                    if (setFormField) {
+
+                    if (setFormField && eleConfigData) {
                         getDifferentData[eleConfigData.pointFormData[0].formType](eleConfigData.pointFormData[0])
                         // setFieldSelect()
                     }
@@ -188,6 +190,17 @@ const setFieldSelect = () => {
     conditionData.value.conditionFormData.map(item => {
         if (Object.keys(item.rowsData).length == 0) {
             item.compareFieldData = compareFieldData.value
+            if (conditionData.value.formType == '2') {
+                item.pattern = false
+                item.primaryFieldData = [{
+                    label: '系统主键ID',
+                    value: 'ID'
+                }]
+                item.primaryKeyField = 'ID'
+            }
+            else {
+                item.pattern = true
+            }
         }
     })
 }
@@ -210,6 +223,7 @@ const getDifferentData: differentData = {
                         })
                     }
                 })
+
                 setFieldSelect()
             }
         }).catch(err => {
@@ -296,6 +310,12 @@ const delConditionForm = (index) => {
     conditionData.value.conditionFormData.splice(index, 1)
 }
 const addConditionForm = () => {
+    let hasEmpty = conditionData.value.conditionFormData.find(item => {
+        return !item.primaryKeyField || !item.compareField || !item.compareType || !item.dataValue
+    })
+    if (hasEmpty) {
+        return ElMessage.error(proxy?.maslg('请设置判断条件'))
+    }
     conditionData.value.conditionFormData.push({
         pattern: false,
         databaseTable: '',
@@ -304,8 +324,10 @@ const addConditionForm = () => {
         compareType: '',
         dataValue: '',
         rowsData: {},
+        primaryFieldData: [],
         compareFieldData: []
     })
+
     if (eleConfigData) {
         getDifferentData[eleConfigData.pointFormData[0].formType](eleConfigData.pointFormData[0])
     }
@@ -338,8 +360,6 @@ const getDatabaseData = () => {
         }
 
     }).catch(err => {
-        console.log(err);
-
         tableLoading.value = false
         ElMessage({
             type: 'error',
@@ -427,6 +447,8 @@ const getFieldData = async () => {
                 item['label'] = item.f_remark
             })
             nowCondition.value!.compareFieldData = res.data
+            nowCondition.value!.primaryFieldData = res.data
+            nowCondition.value!.primaryKeyField = ' '
         }
     }).catch(err => {
         ElMessage({

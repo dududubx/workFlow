@@ -21,6 +21,7 @@ type ContextPadConfig = {
 import { assign } from 'min-dash'
 import { category } from '../palette/cutomCategory'
 import { nextTick } from 'vue';
+import modeling from 'bpmn-js-external-label-modeling';
 export default function ContextPadProvider(this: any, config: ContextPadConfig, injector: Injector, eventBus: EventBus,
     contextPad: ContextPad, modeling: Modeling, elementFactory: ElementFactory,
     connect: Connect, create: Create, popupMenu: PopupMenu,
@@ -77,8 +78,21 @@ ContextPadProvider.prototype.getContextPadEntries = function (element: Element) 
         function appendTask(event, element) {
             if (_autoPlace) {
                 const shape = _elementFactory.createShape(assign({ type: type }, options))
+                // console.log(element);
                 shape['padAdd'] = true
                 _autoPlace.append(element, shape)
+                // if (type != "bpmn:IntermediateThrowEvent") {
+                //     element.outgoing.forEach(eitem => {
+                //         if (eitem.target.id != shape.id) {
+                //             nextTick(() => {
+                //                 let target = JSON.parse(JSON.stringify(eitem.target))
+                //                 _modeling.removeElements([target]);
+                //                 _autoPlace.append(shape, eitem.target)
+                //             })
+
+                //         }
+                //     })
+                // }
             }
             else {
                 appendTaskStart(event, element)
@@ -87,6 +101,7 @@ ContextPadProvider.prototype.getContextPadEntries = function (element: Element) 
 
         function appendTaskStart(event, element) {
             const shape = _elementFactory.createShape(assign({ type: type }, options))
+            shape['padAdd'] = true
             _create.start(event, shape, element)
         }
 
@@ -100,7 +115,7 @@ ContextPadProvider.prototype.getContextPadEntries = function (element: Element) 
             }
         }
     }
-    if (element.type != 'bpmn:EndEvent' && element.type != 'bpmn:SequenceFlow') {
+    if (element.type != 'bpmn:EndEvent' && element.type != 'bpmn:SequenceFlow' && element.type != 'bpmn:IntermediateThrowEvent') {
         category.map((item, index) => {
             let obj = {}
             if (index != 0) {

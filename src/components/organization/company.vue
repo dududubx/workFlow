@@ -38,16 +38,19 @@
                             <el-button type="primary" :icon="ArrowLeftBold" @click="removeLeft" />
                         </div>
                         <div class="main-right">
-                            <span>{{ maslg('已选公司') }}</span>
-                            <el-table class="mas-FinishOperate" :data="state.FinishtableData" ref="FinishtableData"
-                                tooltip-effect="light" border :header-cell-style="{ fontSize: '13px' }"
-                                highlight-current-row @row-click="finishRowClick" @selection-change="FinishtableDataChange"
-                                @row-dblclick="Finishdblclick" :show-overflow-tooltip="true">
-                                <el-table-column v-if="state.type == 2" type="selection" width="50" align="center" />
-                                <el-table-column v-for="item in tableHeader" :key="item.F_EnCode" :prop="item.F_EnCode"
-                                    :label="item.F_FullName" :show-overflow-tooltip="true" align="left">
-                                </el-table-column>
-                            </el-table>
+                            <span class="main-right_title">{{ maslg('已选公司') }}</span>
+                            <el-config-provider :locale="locale">
+                                <el-table class="mas-FinishOperate" :data="state.FinishtableData" ref="FinishtableData"
+                                    tooltip-effect="light" border :header-cell-style="{ fontSize: '13px' }"
+                                    highlight-current-row @row-click="finishRowClick"
+                                    @selection-change="FinishtableDataChange" @row-dblclick="Finishdblclick"
+                                    :show-overflow-tooltip="true" :empty-text="maslg('无数据')">
+                                    <el-table-column v-if="state.type == 2" type="selection" width="50" align="center" />
+                                    <el-table-column v-for="item in tableHeader" :key="item.F_EnCode" :prop="item.F_EnCode"
+                                        :label="item.F_FullName" :show-overflow-tooltip="true" align="left">
+                                    </el-table-column>
+                                </el-table>
+                            </el-config-provider>
                         </div>
                     </div>
                 </template>
@@ -73,6 +76,7 @@ import { organization } from "@/api/OrganizationModule";
 // import { base } from "@/api/XA_Base/XABaseSystemModule"; //接口
 import { ElMessage } from "element-plus";
 import { getTableTree } from "@/utils/util";
+import { setLanguage } from '@/hooks/setLanguage'
 
 interface propsType {
     type: number,
@@ -90,7 +94,7 @@ const props = withDefaults(defineProps<propsType>(), {
     height: '70%',
     width: '60%'
 })
-
+const { locale } = setLanguage()
 const ruleFormRef = ref<FormInstance>();
 const { proxy } = <ComponentInternalInstance>getCurrentInstance();
 const currentPage4 = ref(1);

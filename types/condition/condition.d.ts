@@ -17,6 +17,7 @@ declare interface conditionFormData {
         name?: string,
         tdescription?: string
     },
+    primaryFieldData: { label: string, value: string }[],
     compareFieldData: { label: string, value: string }[],
 
 }

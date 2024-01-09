@@ -100,7 +100,7 @@
     &-center {
         width: 100%;
         height: calc(100% - 51px);
-        background-image: url('../image/img_girid-point.png');
+        background-image: url('../image/grid-dot.png');
         background-repeat: repeat;
         position: relative;
         display: flex;
@@ -151,7 +151,8 @@
                 right: 15px;
                 z-index: 55;
             }
-            .hidden_drawer{
+
+            .hidden_drawer {
                 display: flex;
                 // justify-content: center;
                 flex-direction: column;
@@ -159,20 +160,23 @@
                 height: 100%;
                 width: 100%;
             }
-            .drawer_text{
+
+            .drawer_text {
                 height: 50px;
                 width: 50px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                color:#666666;
-                font-size:14px;
+                color: #666666;
+                font-size: 14px;
                 margin-top: 10px;
                 cursor: pointer;
             }
-            .select_drawer{
-                background:#eef1f6;
+
+            .select_drawer {
+                background: #eef1f6;
             }
+
             .drawcontent {
                 height: 100%;
                 width: 100%;
@@ -351,11 +355,13 @@
                 border-radius: 4px;
                 padding: 10px;
                 margin-bottom: 10px;
-                .flexForm{
+
+                .flexForm {
                     display: flex;
                     align-items: center;
                     // justify-content: center;
                 }
+
                 .formType {
                     border-bottom: 1px solid #dcdfe6;
                     margin-bottom: 14px;
@@ -366,10 +372,11 @@
                     }
 
                     .typeRadio {
-                        .el-radio-group{
+                        .el-radio-group {
                             width: 100%;
                             justify-content: space-between;
                         }
+
                         .el-radio__label {
                             font-size: 13px;
                         }
@@ -401,6 +408,7 @@
                         justify-content: center;
                         margin-left: 10px;
                         cursor: pointer;
+
                         i {
                             color: #fff;
                         }
@@ -421,9 +429,7 @@
                 .write-form {
                     margin-bottom: 10px;
 
-                    .formType-select {
-                        
-                    }
+                    .formType-select {}
 
                     .wirteName {
                         margin-bottom: 5px;
@@ -528,20 +534,24 @@
             }
         }
     }
-    .start_box{
-        &-select{
+
+    .start_box {
+        &-select {
             display: flex;
             align-items: center;
             // justify-content: space-between;
             margin-bottom: 10px;
-            .start_select{
+
+            .start_select {
                 margin-right: 5px;
                 flex: 1;
-                .el-select{
+
+                .el-select {
                     width: 100%;
                 }
             }
-            .start_fixedInput{
+
+            .start_fixedInput {
                 flex: 1;
                 margin-right: 5px;
             }
@@ -607,7 +617,7 @@
         margin-right: 5px;
     }
 
-   
+
     .right_select {
         margin-left: 5px;
         width: 124px;
@@ -652,6 +662,20 @@
             .first_radio {
                 margin-right: 11px;
             }
+        }
+    }
+
+    .btn-name {
+        display: flex;
+        margin-bottom: 10px;
+        align-items: center;
+
+        .title {
+            margin-right: 10px;
+        }
+
+        .input_item {
+            flex: 1;
         }
     }
 
@@ -747,9 +771,11 @@
 :deep(.condition) {
     overflow: auto;
     height: 100%;
-    .el-form-item{
+
+    .el-form-item {
         margin-bottom: 15px !important;
     }
+
     &-form {
         display: flex;
         align-items: center;
@@ -769,93 +795,110 @@
         margin-bottom: 0;
     }
 }
-:deep(.el-dialog){
-    .el-dialog__header{
+
+:deep(.el-dialog) {
+    .el-dialog__header {
         height: 31px;
         padding: 0;
-        background:#e5f2ff;
-        border-radius:2px 2px 0px 0px;
-        font-family:Microsoft YaHei;
+        background: #e5f2ff;
+        border-radius: 2px 2px 0px 0px;
+        font-family: Microsoft YaHei;
         position: relative;
         margin: 0;
         display: flex;
         align-items: center;
-        .el-dialog__title{
-            font-weight:700;
-            color:#333333;
-            font-size:13px;
+
+        .el-dialog__title {
+            font-weight: 700;
+            color: #333333;
+            font-size: 13px;
             padding-left: 16px;
         }
-        .el-dialog__headerbtn{
+
+        .el-dialog__headerbtn {
             width: 31px;
             height: 31px;
             top: 0;
-            .el-dialog__close{
+
+            .el-dialog__close {
                 font-size: 14px;
                 color: #2e2d3c;
                 font-weight: 700;
             }
         }
-        
+
     }
-    .el-dialog__header::before{
+
+    .el-dialog__header::before {
         content: '';
-        height:1px;
+        height: 1px;
         width: 100%;
-        background:linear-gradient(90deg,#0080ff 0%,#4cecd2 100%);
-        border-radius:3px;
+        background: linear-gradient(90deg, #0080ff 0%, #4cecd2 100%);
+        border-radius: 3px;
         display: block;
         position: absolute;
         bottom: 0;
     }
-    .el-dialog__body{
+
+    .el-dialog__body {
         padding: 20px;
         border-bottom: 1px solid #e1e2e2;
     }
-    .el-dialog__footer{
+
+    .el-dialog__footer {
         padding: 0;
         height: 35px;
         padding-right: 20px;
-        .dialog-footer{
+
+        .dialog-footer {
             display: flex;
             align-items: center;
             flex-direction: row-reverse;
-            .el-button{
+
+            .el-button {
                 width: 62px;
                 height: 28px;
-                background:#f1f1f1;
-                border-radius:2px;
+                background: #f1f1f1;
+                border-radius: 2px;
             }
-            .el-button--primary{
-                background:linear-gradient(90deg,#0080ff 0%,#4cdcec 100%);
+
+            .el-button--primary {
+                background: linear-gradient(90deg, #0080ff 0%, #4cdcec 100%);
                 margin-left: 0;
                 margin-right: 4px;
                 border: 0;
             }
-            .el-button:focus, .el-button:hover{
-                color:#373a3c;
+
+            .el-button:focus,
+            .el-button:hover {
+                color: #373a3c;
                 border-color: #cccccc;
             }
-            .el-button--primary:focus, .el-button--primary:hover{
+
+            .el-button--primary:focus,
+            .el-button--primary:hover {
                 color: #fff;
                 border: 0;
             }
         }
     }
-    .searchform_btn{
-        width:64px;
-        height:32px;
-        border-radius:3px;
-        font-size:14px;
+
+    .searchform_btn {
+        width: 64px;
+        height: 32px;
+        border-radius: 3px;
+        font-size: 14px;
     }
-    .search_btn{
-        background:linear-gradient(90deg,#0080ff 0%,#4cdcec 100%);
+
+    .search_btn {
+        background: linear-gradient(90deg, #0080ff 0%, #4cdcec 100%);
         margin-right: 10px;
     }
-    .reload_btn{
-        color:#666666;
-        background:#f8f8f8;
-        border:1px solid #dcdfe6;
+
+    .reload_btn {
+        color: #666666;
+        background: #f8f8f8;
+        border: 1px solid #dcdfe6;
         margin: 0;
     }
 }
@@ -899,9 +942,10 @@
         justify-content: space-around;
         align-items: center;
         height: 50%;
+
         button {
             margin: 0 !important;
-            background:linear-gradient(90deg,#0080ff 0%,#4cdcec 100%);
+            background: linear-gradient(90deg, #0080ff 0%, #4cdcec 100%);
         }
     }
 }
@@ -912,173 +956,174 @@
     right: 0;
 }
 
-:deep(.choose_form){
-    .el-dialog__body{
+:deep(.choose_form) {
+    .el-dialog__body {
         height: 81%;
     }
 }
-:deep(.choose_form-top){
+
+:deep(.choose_form-top) {
     display: flex;
     align-items: center;
     padding-bottom: 20px;
-    .top_box{
+
+    .top_box {
         display: flex;
         align-items: center;
         margin-right: 30px;
-        .top_text{
-            color:#333333;
-            font-size:14px;
+
+        .top_text {
+            color: #333333;
+            font-size: 14px;
             padding-right: 15px;
         }
-        .top_input{
+
+        .top_input {
             width: 200px;
             height: 32px;
         }
     }
 }
-:deep(.el-table){
-    .checker_table{
+
+:deep(.el-table) {
+    .checker_table {
         background-color: #f5f7fa;
-        .el-table__cell{
+
+        .el-table__cell {
             background-color: #f5f7fa;
-            .cell{
-                font-weight:700;
-                color:#333333;
-                font-size:13px;
+
+            .cell {
+                font-weight: 700;
+                color: #333333;
+                font-size: 13px;
             }
         }
     }
-    td.el-table__cell div{
-        color:#333333;
-        font-size:14px;
+
+    td.el-table__cell div {
+        color: #333333;
+        font-size: 14px;
     }
-    .el-table__body tr.current-row>td.el-table__cell{
-        background:#0080ff;
-        div{
-            color: #fff;
+
+    .el-table__body tr.current-row>td.el-table__cell {
+        background: #0080ff;
+
+        div {
+            color: #fff !important;
         }
     }
 }
 
-:deep(.el-pagination){
-    padding-top: 15px;
-    justify-content: flex-end;
-    .is-first{
-        color:#303133;
-        font-size:14px;
-    }
-    .el-input__inner{
-        color:#303133;
-    }
-    .el-pagination__jump{
-        color:#303133;
-    }
-    .btn-next, .btn-prev, .el-pager li{
-        background-color:#f0f2f5;
-        border-radius:4px;
-    }
-    .el-pager li.is-active{
-        background:linear-gradient(90deg,#0080ff 0%,#4cdcec 100%);
-        color: #fff;
-    }
-}
-:deep(.el-pagination--small){
-    .is-first{
+
+
+:deep(.el-pagination--small) {
+    .is-first {
         font-size: 12px;
     }
 }
 
-:deep(.authority_table){
-    &-top{
+:deep(.authority_table) {
+    &-top {
         width: 760px;
         height: 36px;
-        background:#f5f7fa;
+        background: #f5f7fa;
         margin-bottom: 16px;
-        .el-tabs{
+
+        .el-tabs {
             height: 36px;
-            .el-tabs__header{
+
+            .el-tabs__header {
                 margin: 0;
-                .el-tabs__item{
+
+                .el-tabs__item {
                     height: 36px;
-                    color:#333333;
-                    font-size:14px;
+                    color: #333333;
+                    font-size: 14px;
                     line-height: 36px;
                 }
-                .el-tabs__item.is-active{
-                    font-weight:700;
-                    color:#3286ed;
+
+                .el-tabs__item.is-active {
+                    font-weight: 700;
+                    color: #3286ed;
                 }
-                .el-tabs__nav-wrap::after{
+
+                .el-tabs__nav-wrap::after {
                     height: 0;
                 }
             }
         }
     }
-    .el-checkbox__inner{
 
-    }
+    .el-checkbox__inner {}
 }
-:deep(.el-checkbox){
+
+:deep(.el-checkbox) {
     .el-checkbox__inner {
         width: 14px;
         height: 14px;
-        border-radius:2px;
-    
-    }
-    
-    .el-checkbox__input.is-checked .el-checkbox__inner {
-        background:linear-gradient(90deg,#0080ff 0%,#4cdcec 100%);
+        border-radius: 2px;
 
     }
-    
+
+    .el-checkbox__input.is-checked .el-checkbox__inner {
+        background: linear-gradient(90deg, #0080ff 0%, #4cdcec 100%);
+
+    }
+
     .el-checkbox__inner::after {
         width: 4px;
         height: 7px;
         left: 4px;
     }
-    
+
     .el-checkbox__label {
         font-size: 13px;
         color: #333;
     }
-    
+
     .el-checkbox__input.is-checked+.el-checkbox__label {
         color: #0080ff;
     }
 }
 
-:deep(.watch_dialog){
-    .el-dialog__body{
+:deep(.watch_dialog) {
+    .el-dialog__body {
         height: 57%;
         overflow: auto;
-        .watch_form{
-            &-tip{
-                font-weight:700;
-                color:#333333;
-                font-size:13px;
-                line-height:22px;
+
+        .watch_form {
+            &-tip {
+                font-weight: 700;
+                color: #333333;
+                font-size: 13px;
+                line-height: 22px;
                 margin-bottom: 15px;
             }
-            .el-checkbox-group{
+
+            .el-checkbox-group {
                 display: flex;
                 flex-direction: column;
-                .el-checkbox{
+
+                .el-checkbox {
                     height: 25px;
                 }
             }
         }
     }
 }
-:deep( .center_input){
+
+:deep(.center_input) {
     border: 1px solid #dcdfe6;
     border-radius: 3px;
     // margin-right: 5px;
     cursor: pointer;
+
     .el-input__wrapper {
         border-radius: 3px;
         box-shadow: none;
         cursor: pointer;
-        .el-input__inner{
+
+        .el-input__inner {
             cursor: pointer;
         }
     }
@@ -1091,34 +1136,42 @@
         color: #999999;
     }
 }
-:deep(.system_dialog){
-    .el-dialog__body{
+
+:deep(.system_dialog) {
+    .el-dialog__body {
         height: 82%;
-        .systemtree_box{
+
+        .systemtree_box {
             height: 100%;
         }
     }
-    
+
 }
-:deep(.must_item::before){
+
+:deep(.must_item::before) {
     content: '*';
     color: var(--el-color-danger);
     margin-right: 4px;
     height: 28px;
 }
-:deep(.notMust_item){
+
+:deep(.notMust_item) {
     margin-left: 9px;
 }
+
 :deep(.el-select) {
     width: 100%;
 }
-:deep(.select_form-input){
+
+:deep(.select_form-input) {
     width: 100%;
 }
-:deep(.line_radio){
+
+:deep(.line_radio) {
     align-items: flex-start;
     flex-direction: column;
 }
-:deep(.field_input){
+
+:deep(.field_input) {
     margin-bottom: 5px;
 }

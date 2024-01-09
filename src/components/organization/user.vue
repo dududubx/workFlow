@@ -6,7 +6,7 @@
 <template>
 	<div class="mas-dialogBox">
 		<el-dialog style="height:90%" :width="width" v-model="dialogFromVisible"
-			:title="state.type == 2 ? maslg('人员选择多选') : maslg('人员选择单选')" :close-on-click-modal="false"
+			:title="state.type == 2 ? title ? title : maslg('人员选择多选') : maslg('人员选择单选')" :close-on-click-modal="false"
 			:before-close="handleClose" align-center :draggable="true">
 			<content-box :ishowAside="true">
 				<template v-slot:page-tree>
@@ -18,9 +18,9 @@
 				<template v-slot:page-header>
 					<el-form @submit.native.prevent :inline="true" :model="searchList" ref="searchFormRef">
 						<el-row>
-							<el-col :span="8">
+							<el-col :span="5">
 								<el-form-item :label="maslg('姓名')">
-									<el-input v-regCharacter :maxlength="maxlength" placeholder=""
+									<el-input v-debounce="SearchClick" v-regCharacter :maxlength="maxlength" placeholder=""
 										v-model="searchList.F_RealNameLike" clearable></el-input>
 								</el-form-item>
 							</el-col>
@@ -40,10 +40,11 @@
 				<template v-slot:main-content>
 					<div class="mas-mainBox">
 						<div class="main-left">
-							<span>{{ maslg('公司人员') }}</span>
+							<span class="main-right_title">{{ maslg('公司人员') }}</span>
 							<el-table class="mas-operate" :data="state.tableData" ref="multipleTable" tooltip-effect="light"
 								border :header-cell-style="{ fontSize: '13px' }" highlight-current-row @row-click="rowClick"
-								@row-dblclick="Handdblclick" @selection-change="handleSelectionChange">
+								@row-dblclick="Handdblclick" @selection-change="handleSelectionChange"
+								:empty-text="maslg('无数据')">
 								<el-table-column v-if="state.type == 2" type="selection" width="50" align="center" />
 
 								<el-table-column v-for="item in tableHeader" :key="item.F_EnCode" :prop="item.F_EnCode"
@@ -63,16 +64,20 @@
 							<el-button type="primary" :icon="ArrowLeftBold" @click="removeLeft" />
 						</div>
 						<div class="main-right">
-							<span>{{ maslg('已选人员') }}</span>
-							<el-table class="mas-FinishOperate" :data="state.FinishtableData" ref="FinishtableData"
-								tooltip-effect="light" border :header-cell-style="{ fontSize: '13px' }"
-								highlight-current-row @row-click="finishRowClick" @selection-change="FinishtableDataChange"
-								@row-dblclick="Finishdblclick">
-								<el-table-column v-if="state.type == 2" type="selection" width="50" align="center" />
-								<el-table-column v-for="item in tableHeader" :key="item.F_EnCode" :prop="item.F_EnCode"
-									:label="item.F_FullName" :show-overflow-tooltip="true" align="left" :width="item.width">
-								</el-table-column>
-							</el-table>
+							<span class="main-right_title">{{ maslg('已选人员') }}</span>
+							<el-config-provider :locale="locale">
+								<el-table class="mas-FinishOperate" :data="state.FinishtableData" ref="FinishtableData"
+									tooltip-effect="light" border :header-cell-style="{ fontSize: '13px' }"
+									highlight-current-row @row-click="finishRowClick"
+									@selection-change="FinishtableDataChange" @row-dblclick="Finishdblclick"
+									:empty-text="maslg('无数据')">
+									<el-table-column v-if="state.type == 2" type="selection" width="50" align="center" />
+									<el-table-column v-for="item in tableHeader" :key="item.F_EnCode" :prop="item.F_EnCode"
+										:label="item.F_FullName" :show-overflow-tooltip="true" align="left"
+										:width="item.width">
+									</el-table-column>
+								</el-table>
+							</el-config-provider>
 						</div>
 					</div>
 				</template>
@@ -98,6 +103,7 @@ const ContentBox = defineAsyncComponent(() => import("@/components/contentBox/co
 import { ElMessage, ElTree } from "element-plus";
 import { FormInstance, TableInstance } from "element-plus";
 import pagination from '../pagination/index.vue'
+import { setLanguage } from '@/hooks/setLanguage'
 
 interface propsType {
 	type: number,
@@ -105,7 +111,7 @@ interface propsType {
 	userIds: string,
 	height: string,
 	width: string,
-	isCallBackColse?: boolean
+	isCallBackColse?: boolean,
 }
 // 定义父组件传过来的值
 const props = withDefaults(defineProps<propsType>(), {
@@ -114,8 +120,9 @@ const props = withDefaults(defineProps<propsType>(), {
 	userIds: '',
 	height: '70%',
 	width: '95%',
-	isCallBackColse: false
+	isCallBackColse: false,
 })
+const { locale } = setLanguage()
 const ruleFormRef = ref<FormInstance>();
 const { proxy } = <ComponentInternalInstance>getCurrentInstance();
 const currentPage4 = ref(1);
@@ -176,12 +183,25 @@ const getTableList = async () => {
 	state.tableData = data.rows;
 	searchData.total = data.records;
 	if (state.FinishtableData.length > 0 && setSelectRow) {
-		let selectData = state.tableData.find(el => {
-			return el.F_UserId == state.FinishtableData[0].F_UserId
-		})
-		nextTick(() => {
-			multipleTable.value!.setCurrentRow(selectData)
-		})
+		if (state.type == 1) {
+			let selectData = state.tableData.find(el => {
+				return el.F_UserId == state.FinishtableData[0].F_UserId
+			})
+			nextTick(() => {
+				multipleTable.value!.setCurrentRow(selectData)
+			})
+		}
+		else {
+			nextTick(() => {
+				state.tableData.map(el => {
+					state.FinishtableData.map(item => {
+						if (el.F_UserId == item.F_UserId) {
+							multipleTable.value!.toggleRowSelection(el, undefined)
+						}
+					})
+				})
+			})
+		}
 	}
 };
 // 查询
@@ -191,6 +211,7 @@ const SearchClick = () => {
 //重置
 const resetClick = () => {
 	searchList.F_RealNameLike = "";
+	getTableList();
 };
 // 取消
 const handleClose = () => {
@@ -205,8 +226,8 @@ const submitForm = () => {
 		});
 		return;
 	}
-	proxy?.$emit("chooseReault", toRaw(state.FinishtableData), submitClickTree);
 	props.isCallBackColse ? "" : (dialogFromVisible.value = false);
+	proxy?.$emit("chooseReault", toRaw(state.FinishtableData), submitClickTree);
 };
 //页数变化
 const handleCurrentChange = val => {
@@ -268,6 +289,15 @@ const addRight = () => {
 };
 const removeLeft = () => {
 	if (!state.FinishtableData.length || !state.removeData.length) return;
+	if (state.type == 2) {
+		state.tableData.map(titem => {
+			state.removeData.map(item => {
+				if (titem.F_UserId == item.F_UserId) {
+					multipleTable.value!.toggleRowSelection(titem, undefined);
+				}
+			})
+		})
+	}
 	state.FinishtableData = state.FinishtableData.filter(x => !state.removeData.some(y => y === x));
 	state.removeData = [];
 };
@@ -347,11 +377,14 @@ const clearSelectData = async (selectData: any[], treeData: any) => {
 	})
 
 }
+const rebackMutipleSelect = (tableData: any[]) => {
+	state.FinishtableData = tableData
+}
 onMounted(() => {
 	state.type = props.type;
 	getTableList();
 });
-defineExpose({ getFromData, handleClose, clearSelectData });
+defineExpose({ getFromData, handleClose, clearSelectData, rebackMutipleSelect });
 </script>
 
 <style lang="scss" scoped>
@@ -379,12 +412,12 @@ defineExpose({ getFromData, handleClose, clearSelectData });
 
 	.mas-operate {
 		height: calc(100% - 68px);
-		overflow: scroll;
+		// overflow: scroll;
 	}
 
 	.mas-FinishOperate {
 		height: calc(100% - 32px);
-		overflow: scroll;
+		// overflow: scroll;
 	}
 
 	.mas-middle {
@@ -403,7 +436,7 @@ defineExpose({ getFromData, handleClose, clearSelectData });
 
 :deep(.el-dialog .el-dialog__footer) {
 	position: absolute;
-	bottom: 0;
+	bottom: 5px;
 	right: 0;
 }
 </style> 

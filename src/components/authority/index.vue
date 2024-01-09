@@ -9,7 +9,7 @@
                 </el-tabs>
             </div>
             <el-table :data="tableData" border style="width: 100%" height="440" :show-overflow-tooltip="true"
-                header-row-class-name="checker_table" v-loading="tableLoading">
+                header-row-class-name="checker_table" v-loading="tableLoading" :empty-text="maslg('无数据')">
                 <el-table-column prop="fieldName" :label="maslg('字段名称')"></el-table-column>
                 <el-table-column prop="fieldCode" :label="maslg('字段代码')"></el-table-column>
                 <el-table-column prop="operate" :label="maslg('操作')">
@@ -72,6 +72,11 @@ const openDialog = async (val: pointFormData, id: string, look: boolean) => {
         tabsData.value = val.tabsData
         activeName.value = tabsData.value[0].ID
     }
+    val.fieldData.forEach((item: any) => {
+        item.isEdit = item.isEdit == 1 ? true : item.isEdit == 0 ? false : item.isEdit
+        item.isLook = item.isLook == 1 ? true : item.isLook == 0 ? false : item.isLook
+        item.isNotNull = item.isNotNull == 1 ? true : item.isNotNull == 0 ? false : item.isNotNull
+    })
     tableAllData.value = val.fieldData
     setTableData(activeName.value)
 }

@@ -20,6 +20,27 @@
                     </el-button>
                 </el-tooltip>
                 <span class="handle_split">|</span>
+                <el-tooltip class="item" effect="dark" :content="maslg('左对齐')" placement="bottom">
+                    <el-button text @click="alignElements('left')">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-layout-left"></use>
+                        </svg>
+                    </el-button>
+                </el-tooltip>
+                <el-tooltip class="item" effect="dark" :content="maslg('居中')" placement="bottom">
+                    <el-button text @click="alignElements('middle')">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-layout-vertical"></use>
+                        </svg>
+                    </el-button>
+                </el-tooltip>
+                <el-tooltip class="item" effect="dark" :content="maslg('右对齐')" placement="bottom">
+                    <el-button text @click="alignElements('right')">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-layout-right"></use>
+                        </svg>
+                    </el-button>
+                </el-tooltip>
                 <el-tooltip class="item" effect="dark" :content="maslg('顶部对齐')" placement="bottom">
                     <el-button text @click="alignElements('top')">
                         <svg class="icon" aria-hidden="true">
@@ -48,37 +69,20 @@
                         </svg>
                     </el-button>
                 </el-tooltip>
-                <el-tooltip class="item" effect="dark" :content="maslg('水平居中')" placement="bottom">
-                    <el-button text @click="alignElements('middle')">
-                        <svg class="icon" aria-hidden="true">
-                            <use xlink:href="#icon-layout-vertical"></use>
-                        </svg>
-                    </el-button>
-                </el-tooltip>
-                <el-tooltip class="item" effect="dark" :content="maslg('左对齐')" placement="bottom">
-                    <el-button text @click="alignElements('left')">
-                        <svg class="icon" aria-hidden="true">
-                            <use xlink:href="#icon-layout-vertical"></use>
-                        </svg>
-                    </el-button>
-                </el-tooltip>
-                <el-tooltip class="item" effect="dark" :content="maslg('右对齐')" placement="bottom">
-                    <el-button text @click="alignElements('right')">
-                        <svg class="icon" aria-hidden="true">
-                            <use xlink:href="#icon-layout-vertical"></use>
-                        </svg>
-                    </el-button>
-                </el-tooltip>
                 <el-tooltip class="item" effect="dark" :content="maslg('开启/关闭小地图')" placement="bottom">
                     <el-button text @click="closeMiniMap()" :icon="Setting" class="minimap">
                     </el-button>
                 </el-tooltip>
+                <el-tooltip class="item" effect="dark" :content="maslg('删除节点')" placement="bottom">
+                    <el-button ref="deletPointBtn" text @click="deletePoint" :icon="Delete" class="delet_btn-point minimap">
+                    </el-button>
+                </el-tooltip>
             </div>
-            <div class="design-top_rightBtn">
+            <div class="design-top_rightBtn" v-if="!hiddenOrshow">
                 <el-button type="primary" class="close_btn" :icon="SwitchButton" @click="closeFlow">
                     {{ maslg('关闭') }}
                 </el-button>
-                <el-button type="primary" class="save_btn" :icon="Check" @click="saveFlowData">
+                <el-button type="primary" class="save_btn" :icon="Check" @click="saveFlowData()">
                     {{ maslg('保存') }}
                 </el-button>
             </div>
@@ -111,7 +115,8 @@
                     <flow-config v-show="activeIndex == '1'" ref="flowBox"></flow-config>
                     <check-point v-if="showCheckPoint && activeIndex == '2'" :nodeList="nodeList"
                         @changPointName="changPointName" :connectionList="connectionList" v-model:checker-data="checkerData"
-                        :clickElement="clickElement" @changeCheckerData="changeCheckerData">
+                        :clickElement="clickElement" @changeCheckerData="changeCheckerData"
+                        :settingDefineFormData="definePointFormData" :key="clickElement.Id">
                     </check-point>
                     <condition-point v-else-if="clickElement.type == 'bpmn:ParallelGateway' && activeIndex == '2'"
                         @changPointName="changPointName" v-model:conditionData="conditionData" :nodeList="nodeList"
@@ -128,8 +133,8 @@
 </template>
 
 <script setup lang='ts'>
-import { ref, reactive, getCurrentInstance, ComponentInternalInstance, onMounted, nextTick, watch, toRaw, computed, onUnmounted } from 'vue'
-import { SwitchButton, Check, SuccessFilled, Right, Setting } from '@element-plus/icons-vue'
+import { ref, reactive, getCurrentInstance, ComponentInternalInstance, onMounted, nextTick, watch, toRaw, computed, onUnmounted, toRefs, provide } from 'vue'
+import { SwitchButton, Check, SuccessFilled, Right, Setting, Delete } from '@element-plus/icons-vue'
 import BpmnModeler from 'bpmn-js/lib/Modeler'
 import { xmlStr } from '@/utils/xmlStr'
 import Selection from 'diagram-js/lib/features/selection/Selection'
@@ -151,6 +156,8 @@ import MoveCanvasModule from 'diagram-js/lib/navigation/movecanvas'
 import ElementFactory from 'bpmn-js/lib/features/modeling/ElementFactory'
 import minimapModule from 'diagram-js-minimap'
 import preExecute from '@/components/alignElements/rewriteAlign'
+import { validSubmitData } from '@/hooks/validateSubmit'
+import router from '@/router'
 const { proxy } = <ComponentInternalInstance>getCurrentInstance()
 type allShap = {
     _elements: Object,
@@ -167,18 +174,18 @@ const showOrhidden = () => {
 const handleSelect = (index: any) => {
     activeIndex.value = index
 }
-watch(drawer, async (val) => {
-    await nextTick()
-    let minmapDocument = document.querySelector('.djs-minimap') as HTMLDivElement
-    if (minmapDocument) {
-        if (val) {
-            minmapDocument.style.right = 480 + 'px'
+watch(drawer, (val) => {
+    nextTick(() => {
+        let minmapDocument = document.querySelector('.djs-minimap') as HTMLDivElement
+        if (minmapDocument) {
+            if (val) {
+                minmapDocument.style.right = 480 + 'px'
+            }
+            else {
+                minmapDocument.style.right = 80 + 'px'
+            }
         }
-        else {
-            minmapDocument.style.right = 80 + 'px'
-        }
-    }
-
+    })
 }, {
     immediate: true
 })
@@ -195,23 +202,27 @@ let initDesign = () => {
             container: container.value,
             additionalModules: [
                 {
+                    //禁用/清空左侧工具栏
+                    // paletteProvider: ["value", ''],
                     //禁止移动画布
                     moveCanvas: ['value', ''],
                     //禁止鼠标滚轮缩小放大画布
                     // zoomScroll: ['value', ''],
                     // 禁止双击节点出现label编辑框
                     labelEditingProvider: ['value', ''],
-                    bendpoints: ['value', {}],
+                    //禁止拖动连接线
+                    // bendpoints: ['value', {}],
                     //禁用鼠标焦点移动到画布边缘，画布自动滚动功能
-                    autoScroll: ['value', {}]
+                    autoScroll: ['value', {}],
+                    // move: ['value', {}],
+                    //禁用图形菜单
+                    // contextPadProvider: ['value', {}]
                 },
-                minimapModule
+                minimapModule,
             ]
         })
         createNewDiagram()
     } catch (error) {
-        console.log(error);
-
     }
 
 }
@@ -282,11 +293,11 @@ const saveConfig: object = {
         }
         let getbusineData = element.businessObject.$attrs.configData
         let configData = element.configData
-        if (getbusineData) {
-            lineFormData.value = JSON.parse(getbusineData)
-        }
-        else if (configData) {
+        if (configData) {
             lineFormData.value = element.configData
+        }
+        else if (getbusineData) {
+            lineFormData.value = JSON.parse(getbusineData)
         }
         else {
             lineFormData.value = setFormData
@@ -299,24 +310,16 @@ const saveConfig: object = {
             formType: '',
             tableCode: '',
             formCode: '',
-            conditionFormData: <conditionFormData[]>[{
-                pattern: false,
-                databaseTable: '',
-                primaryKeyField: '',
-                compareField: '',
-                compareType: '',
-                dataValue: '',
-                rowsData: {},
-                compareFieldData: []
-            }]
+            conditionFormData: <conditionFormData[]>[]
         })
         let getbusineData = element.businessObject.$attrs.configData
         let configData = element.configData
-        if (getbusineData) {
-            conditionData.value = JSON.parse(getbusineData)
+
+        if (configData) {
+            conditionData.value = reactive(element.configData)
         }
-        else if (configData) {
-            conditionData.value = element.configData
+        else if (getbusineData) {
+            conditionData.value = reactive(JSON.parse(getbusineData))
         }
         else {
             conditionData.value = setconditionData
@@ -340,16 +343,7 @@ const saveConfig: object = {
                 auditorAgainType: '1',
                 auditorType: '1'
             },
-            checkerArr: [{
-                seletItem: '',
-                inputItem: '',
-                departmentItem: '',
-                organizationData: [],
-                clickTree: {},
-                fieldForm: '',
-                fieldCategory: '',
-                relativeField: ''
-            }],
+            checkerArr: [],
             pointFormData: [{
                 formType: '1',
                 selectForm: '',
@@ -373,24 +367,20 @@ const saveConfig: object = {
                 notificationStrategy: ''
             },
             agreeBtn: {
+                name: '同意',
                 hiddenBtn: false,
                 signature: false,
                 nextChecker: '1'
             },
             disagreeBtn: {
+                name: '不同意',
                 hiddenBtn: false,
                 signature: false,
                 nextChecker: '1',
                 saveFormData: true,
                 rejectWay: '1'
             },
-            writeBack: [{
-                backForm: {},
-                backField: '',
-                addBack: true,
-                splitString: '',
-                backContent: 'hum'
-            }],
+            writeBack: [],
             adConfig: {
                 watchFormData: [],
                 otherForm: []
@@ -398,11 +388,11 @@ const saveConfig: object = {
         })
         let getbusineData = element.businessObject.$attrs.configData
         let configData = element.configData
-        if (getbusineData) {
-            checkerData.value = JSON.parse(getbusineData)
+        if (configData) {
+            checkerData.value = configData
         }
-        else if (configData) {
-            checkerData.value = element.configData
+        else if (getbusineData) {
+            checkerData.value = JSON.parse(getbusineData)
         }
         else {
             checkerData.value = setCheckerData
@@ -417,16 +407,7 @@ const saveConfig: object = {
                 mutipleCheck: true,
                 manualChecker: true,
             },
-            checkerArr: [{
-                seletItem: '',
-                inputItem: '',
-                departmentItem: '',
-                organizationData: [],
-                clickTree: {},
-                fieldForm: '',
-                fieldCategory: '',
-                relativeField: ''
-            }],
+            checkerArr: [],
             pointFormData: [{
                 formType: '1',
                 selectForm: '',
@@ -450,25 +431,28 @@ const saveConfig: object = {
         })
         let getbusineData = element.businessObject.$attrs.configData
         let configData = element.configData
-        if (getbusineData) {
-            checkerData.value = JSON.parse(getbusineData)
-        }
-        else if (configData) {
+
+        if (configData) {
             checkerData.value = element.configData
+        }
+        else if (getbusineData) {
+            checkerData.value = JSON.parse(getbusineData)
         }
         else {
             checkerData.value = setCheckerData
         }
         setEleData(element, checkerData)
     },
+    //开始节点
     'bpmn:IntermediateCatchEvent': (element: Shape) => {
         const setCheckerData = reactive<parentCheckData>({
             checkData: {
                 name: element.name ? element.name : '',
                 inform: '',
-                manualChecker: false,
-                appointChecker: false,
-                manualTitle: false
+                manualChecker: false,//下一审核节点无审核人员时可手动设置
+                appointChecker: false,//允许手动指定下一节点审核人
+                manualTitle: false,//是否允许自定义标题
+                isSaveDraftValid: false //保存草稿时是否验证表单
             },
             pointFormData: [{
                 formType: '1',
@@ -490,22 +474,17 @@ const saveConfig: object = {
                 watchFormData: [],
                 otherForm: []
             },
-            titleConfig: [{
-                selectData: '',
-                fixedValue: ''
-            }],
-            titleWriteBack: [{
-                fieldSelect: null,
-                writeSelect: ''
-            }]
+            titleConfig: [],
+            titleWriteBack: []
         })
         let getbusineData = element.businessObject.$attrs.configData
         let configData = element.configData
-        if (getbusineData) {
-            checkerData.value = JSON.parse(getbusineData)
-        }
-        else if (configData) {
+
+        if (configData) {
             checkerData.value = element.configData
+        }
+        else if (getbusineData) {
+            checkerData.value = JSON.parse(getbusineData)
         }
         else {
             checkerData.value = setCheckerData
@@ -513,10 +492,57 @@ const saveConfig: object = {
         setEleData(element, checkerData)
     },
     'bpmn:UserTask': (element: Shape) => {
+        const setCheckerData = reactive<parentCheckData>({
+            checkData: {
+                name: element.name ? element.name : '',
+                inform: '',
+                manualChecker: false,//下节点无人员
+                childType: '1',//子流程执行策略
+                childFlow: {},//选择的子流程
+                childFlowName: '',
+            },
+            checkerArr: [], //审核者
+            pointFormData: [{
+                formType: '1',
+                selectForm: '',
+                pcFormAddress: '',
+                mtFormAddress: '',
+                pcView: '',
+                mtView: '',
+                relevanceField: '',
+                rowsData: {},
+                tabsData: [],
+                fieldData: [],
+                customData: {},
+                pcviewOptionData: [],
+                mtViewData: [],
+                cutomFieldData: []
+            }],
 
+            advanceData: <advancedForm>{
+                category: 'sql',
+                database: '',
+                agreeSQL: '',
+                disagreeSQL: '',
+                agreePort: '',
+                disagreePort: ''
+            }
+        })
+        let getbusineData = element.businessObject.$attrs.configData
+        let configData = element.configData
+        if (configData) {
+            checkerData.value = element.configData
+        }
+        else if (getbusineData) {
+            checkerData.value = JSON.parse(getbusineData)
+        }
+        else {
+            checkerData.value = setCheckerData
+        }
+        setEleData(element, checkerData)
     }
 }
-const canShowPoint = ['bpmn:Task', 'bpmn:IntermediateThrowEvent', 'bpmn:IntermediateCatchEvent']
+const canShowPoint = ['bpmn:Task', 'bpmn:IntermediateThrowEvent', 'bpmn:IntermediateCatchEvent', 'bpmn:UserTask']
 const showCheckPoint = computed(() => canShowPoint.includes(clickElement.value.type))
 
 const setEleData = (ele: Shape, data: any) => {
@@ -528,9 +554,12 @@ const setEleData = (ele: Shape, data: any) => {
     // })
 
 }
+
 //获取modeler中的部分实列操作类
 const getmodelEvent = () => {
     const bpmnjs = bpmnModeler
+    const d = bpmnModeler.get('autoPlace')
+
     modeling = bpmnjs.get('modeling')
     let handlers = modeling?.getHandlers()
     //修改modeling原型上的元素对齐处理函数
@@ -581,32 +610,35 @@ let findParent = () => {
     resutYData = nodeList.value.sort((a, b) => { return a.y - b.y })[0]
 }
 let connectionEvent = () => {
-    hasCondition.clear()
-    let events = ['connection.added', 'connection.removed', 'connection.changed']
+    // hasCondition.clear()
+    let events = ['connection.added', 'connection.removed']
     let callback = (...args) => {
         let event = args[0]
         let shape: Connection = args[3]
         let elementRegistry = args[1]
-        if (shape.type != 'label' && !addByPad) {
-            clickElement.value = shape
+        if (shape.type != 'label') {
+            if (!addByPad) {
+                clickElement.value = shape
+            }
+            saveConfig[shape.type](shape)
         }
         // debugger
         if (event == 'connection.added') {
             nodeList.value.push(shape)
-            if (shape.target!.type == "bpmn:ParallelGateway") {
-                if (hasCondition.has(shape.target!.id)) {
-                    nextTick(() => {
-                        modeling?.removeConnection(shape as any)
-                    })
-                    return ElMessage({
-                        type: 'error',
-                        message: proxy?.maslg('一个判断节点只能有一个父级')
-                    })
-                }
-                else {
-                    hasCondition.set(shape.target!.id, shape)
-                }
-            }
+            // if (shape.target!.type == "bpmn:ParallelGateway") {
+            //     if (hasCondition.has(shape.target!.id)) {
+            //         nextTick(() => {
+            //             modeling?.removeConnection(shape as any)
+            //         })
+            //         return ElMessage({
+            //             type: 'error',
+            //             message: proxy?.maslg('一个判断节点只能有一个父级')
+            //         })
+            //     }
+            //     else {
+            //         hasCondition.set(shape.target!.id, shape)
+            //     }
+            // }
             if (shape.source!.type == 'bpmn:IntermediateThrowEvent') {
                 nextTick(() => {
                     modeling?.removeConnection(shape)
@@ -614,14 +646,16 @@ let connectionEvent = () => {
             }
         }
         if (event == 'connection.removed') {
+            console.log(event);
+
             nodeList.value.map((item, index) => {
                 if (item.id == shape.id) {
                     nodeList.value.splice(index, 1)
                 }
             })
-            if (elementRegistry.get(shape.target!.id) && elementRegistry.get(shape.target!.id)!.incoming.length == 1) {
-                hasCondition.delete(shape.target!.id)
-            }
+            // if (elementRegistry.get(shape.target!.id) && elementRegistry.get(shape.target!.id)!.incoming.length == 1) {
+            //     hasCondition.delete(shape.target!.id)
+            // }
         }
     }
     eventFunction(events, callback)
@@ -631,6 +665,9 @@ let bpmnEvent = () => {
     let callback = async (...args) => {
         let event = args[0]
         let shape = args[3]
+        let data = (command as any)._stack
+        console.log(data);
+
         // let elementRegistry = args[1]
         if (event == 'shape.added') {
             //当新增节点超出可视区域后将cavas的滚动条设置到开始的节点
@@ -835,11 +872,9 @@ const elementBus = () => {
         drawer.value = true
         let e = args[2]
         if (saveShape.has(e.element.id)) {
-            // console.log(saveShape.get(e.element.id));
 
         }
         clickElement.value = e.element
-        // console.log(allShape);
         // nodeList.value = []
         connectionList.value = []
         for (let i in allShape?._elements) {
@@ -855,82 +890,88 @@ const elementBus = () => {
     }
     eventFunction(events, callback)
 }
-//顶部对齐操作
-const alignElements = (tag: string) => {
+const seletData = (callback: Function) => {
     if (modeling && selection) {
         const SelectedElements = selection.get()
+        callback && callback(SelectedElements)
+    }
+}
+//顶部对齐操作
+const alignElements = (tag: string) => {
+    seletData((SelectedElements: any[]) => {
         if (!SelectedElements || SelectedElements.length <= 1) {
-            ElMessage({
+            return ElMessage({
                 message: proxy?.maslg('请选择至少两个元素'),
                 type: 'warning'
             })
         }
-        // if (tag == 'horizonta') {
-        //     let selectArr = JSON.parse(JSON.stringify(SelectedElements))
-        //     let flowArr: Object[] = []
-        //     var delta = {
-        //         x: 0,
-        //         y: 0
-        //     };
-        //     SelectedElements.map(item => {
-        //         // if (item.type == "bpmn:SequenceFlow") {
-        //         //     flowArr.push(item)
-        //         // }
-        //         // delta.x = item.x
-        //         // delta.y = item.y
-        //         lineArr.map(litem => {
-        //             if (litem.target.id == item.id || litem.source.id == item.id) {
-        //                 flowArr.push(litem)
-        //             }
-        //         })
-        //     })
-        // tag = 'middle'
-        //需要先删除已有线条
-        // flowArr.map((fitem: any) => {
-        //     canvas.removeShape(fitem.id)
-        // })
-        // let alignElement = selectArr.sort((a, b) => { return b.y - a.y })[0]
-        // let x = alignElement.x
-        // let y = alignElement.y
-        // SelectedElements.map((item, index) => {
-        //     if (item.id != alignElement.id) {
-        //         item.y = y + alignElement.height - item.height
-        //     }
-
-        // })
-        // let distance = SelectedElements.sort((a, b) => { return a.x - b.x })
-        // let elemtDistance = distance[distance.length - 1].x - distance[0].x
-        // distance.map((item, index) => {
-        //     if (index != distance.length - 1) {
-        //         elemtDistance -= distance[index].width
-        //     }
-
-        // })
-
-        // let averageDistance = elemtDistance / (SelectedElements.length - 1)
-        // distance.map((ditem, index) => {
-        //     if (index != 0 && index != distance.length - 1) {
-        //         ditem.x = parseFloat(distance[index - 1].x + averageDistance + distance[index - 1].width)
-
-        //     }
-        // })
-
-        // let attr: any = null
-        // if (flowArr.length > 0) {
-        //     flowArr.map((fitem: any) => {
-        //         // let source = SelectedElements.find(item => {
-        //         //     return fitem.source.id == item.id
-        //         // })
-        //         // let target = SelectedElements.find(item => {
-        //         //     return fitem.target.id == item.id
-        //         // })
-        //         modeling?.connect(fitem.source, fitem.target, attr)
-        //     })
-        // }
-
-        // }
         align.trigger(SelectedElements, tag)
-    }
+    })
+    // if (tag == 'horizonta') {
+    //     let selectArr = JSON.parse(JSON.stringify(SelectedElements))
+    //     let flowArr: Object[] = []
+    //     var delta = {
+    //         x: 0,
+    //         y: 0
+    //     };
+    //     SelectedElements.map(item => {
+    //         // if (item.type == "bpmn:SequenceFlow") {
+    //         //     flowArr.push(item)
+    //         // }
+    //         // delta.x = item.x
+    //         // delta.y = item.y
+    //         lineArr.map(litem => {
+    //             if (litem.target.id == item.id || litem.source.id == item.id) {
+    //                 flowArr.push(litem)
+    //             }
+    //         })
+    //     })
+    // tag = 'middle'
+    //需要先删除已有线条
+    // flowArr.map((fitem: any) => {
+    //     canvas.removeShape(fitem.id)
+    // })
+    // let alignElement = selectArr.sort((a, b) => { return b.y - a.y })[0]
+    // let x = alignElement.x
+    // let y = alignElement.y
+    // SelectedElements.map((item, index) => {
+    //     if (item.id != alignElement.id) {
+    //         item.y = y + alignElement.height - item.height
+    //     }
+
+    // })
+    // let distance = SelectedElements.sort((a, b) => { return a.x - b.x })
+    // let elemtDistance = distance[distance.length - 1].x - distance[0].x
+    // distance.map((item, index) => {
+    //     if (index != distance.length - 1) {
+    //         elemtDistance -= distance[index].width
+    //     }
+
+    // })
+
+    // let averageDistance = elemtDistance / (SelectedElements.length - 1)
+    // distance.map((ditem, index) => {
+    //     if (index != 0 && index != distance.length - 1) {
+    //         ditem.x = parseFloat(distance[index - 1].x + averageDistance + distance[index - 1].width)
+
+    //     }
+    // })
+
+    // let attr: any = null
+    // if (flowArr.length > 0) {
+    //     flowArr.map((fitem: any) => {
+    //         // let source = SelectedElements.find(item => {
+    //         //     return fitem.source.id == item.id
+    //         // })
+    //         // let target = SelectedElements.find(item => {
+    //         //     return fitem.target.id == item.id
+    //         // })
+    //         modeling?.connect(fitem.source, fitem.target, attr)
+    //     })
+    // }
+
+    // }
+
 }
 //撤销
 const undo = () => {
@@ -974,7 +1015,6 @@ const changPointName = (name) => {
         modeling?.updateLabel(newElement, name)
         removeUndoArr('.updateLabel')
         // let data = (command as any)._stack
-        // console.log(data);
         // data.map((item, index) => {
         //     if (item.command.indexOf('.updateLabel') != -1) {
         //         data.splice(index, 1);
@@ -1001,6 +1041,25 @@ const changelineColor = (val) => {
 }
 const closeMiniMap = () => {
     minimap && minimap.toggle()
+}
+
+
+const deletePoint = () => {
+    seletData((SelectedElements: any[]) => {
+        if (!SelectedElements || SelectedElements.length <= 0) {
+            return ElMessage({
+                message: proxy?.maslg('请选择要删除的元素'),
+                type: 'warning'
+            })
+        }
+        nextTick(() => {
+            modeling?.removeElements([...SelectedElements])
+        })
+        // modeling?.removeElements(SelectedElements)
+        // SelectedElements.forEach(item => {
+        //     modeling?.removeShape(item)
+        // })
+    })
 }
 watch(clickElement, (val) => {
     if (val) {
@@ -1110,7 +1169,7 @@ const saveNodesAndLines: { [key: string]: <T extends Connection | Shape>(val: T)
         obj.sp = linePosition(element)[0]
         obj.ep = linePosition(element)[1]
         obj.type = element.waypoints.length > 2 ? 'td' : 'lr'
-        obj.name = element.configData.name
+        obj.name = element.configData?.name ? element.configData.name : ''
         obj.color = element.configData.color == 'black' ? '1' : '2'
         obj.strategy = element.configData.lineStrategy == 'allthrough' ? '1' : '2'
         obj.agreeList = element.configData.lineStrategy == 'allthrough' ? '' : element.configData.lineStrategy
@@ -1157,11 +1216,14 @@ const saveNodesAndLines: { [key: string]: <T extends Connection | Shape>(val: T)
             formCode: ''
         }
         let data = element.configData
+        let hasError;
+        const { validateCondition } = validSubmitData()
+        hasError = validateCondition(data.conditionFormData)
         data.conditionFormData.map(item => {
             let conditionObj = {
                 dbId: 'lrsystemdb',
                 table: item.databaseTable ? item.rowsData.name : data.tableCode,
-                field1: item.primaryKeyField ? item.primaryKeyField : item.compareField,
+                field1: item.primaryKeyField,
                 field2: item.compareField,
                 compareType: item.compareType,
                 value: item.dataValue,
@@ -1171,7 +1233,11 @@ const saveNodesAndLines: { [key: string]: <T extends Connection | Shape>(val: T)
         })
         obj.formCode = data.formCode
         scheme.nodes.push(obj)
-        return false
+        if (hasError) {
+            return true
+        }
+        else
+            return false
     },
     'bpmn:Task': (element) => {
         let obj = {
@@ -1231,7 +1297,7 @@ const saveNodesAndLines: { [key: string]: <T extends Connection | Shape>(val: T)
 
         let agreeBtn = {
             id: '1',
-            name: '同意',
+            name: data.agreeBtn.name ? data.agreeBtn.name : '同意',
             code: 'agree',
             file: '1',
             next: data.agreeBtn.nextChecker,
@@ -1242,7 +1308,7 @@ const saveNodesAndLines: { [key: string]: <T extends Connection | Shape>(val: T)
         }
         let disagreeBtn = {
             id: '2',
-            name: "不同意",
+            name: data.disagreeBtn.name ? data.disagreeBtn.name : '不同意',
             code: 'disagree',
             file: '1',
             next: data.disagreeBtn.nextChecker,
@@ -1251,22 +1317,25 @@ const saveNodesAndLines: { [key: string]: <T extends Connection | Shape>(val: T)
             isSign: data.disagreeBtn.signature ? '1' : '2',
             reject: data.disagreeBtn.rejectWay
         }
-        obj.btnList.concat([agreeBtn, disagreeBtn])
-        let hasError;
+        obj.btnList = obj.btnList.concat([agreeBtn, disagreeBtn])
+        let hasError = <any[]>[]
         //保存节点表单设置
         data.pointFormData.map(item => {
             setWfForm(obj, item)
         })
         obj.formCode = obj.wfForms[0].formcode
         //保存审核者
-        setAuditors(element, obj)
+        hasError.push(setAuditors(element, obj))
         //保存消息回写数据
-        hasError = saveMessageWriteBack(data, obj)
+        hasError.push(saveMessageWriteBack(data, obj))
         scheme.nodes.push(obj)
-        if (hasError) {
+        if (hasError.some(item => {
+            return item == true
+        })) {
             return true
         }
-        return false
+        else
+            return false
     },
     'bpmn:IntermediateThrowEvent': (element) => {
         let obj = {
@@ -1314,8 +1383,8 @@ const saveNodesAndLines: { [key: string]: <T extends Connection | Shape>(val: T)
         hasError = setAuditors(element, obj)
         scheme.nodes.push(obj)
         return hasError
-        // console.log(obj);
     },
+    //开始节点
     'bpmn:IntermediateCatchEvent': (element) => {
         let obj = {
             id: '',
@@ -1329,6 +1398,7 @@ const saveNodesAndLines: { [key: string]: <T extends Connection | Shape>(val: T)
             notice: '',//通知策略
             isNext: '',//是否手动指定审核人 1:指定 2:不指定
             isTitle: '',//是否自定义标题 1:指定 2:不指定
+            isSaveDraftValid: '',//草稿保存是否验证表单 0:不验证 1:验证
             appointSetUser: '',//是否手动设置审核人 1:不允许 2:允许
             isAllAuditor: '1',
             auditExecutType: '1',
@@ -1356,6 +1426,7 @@ const saveNodesAndLines: { [key: string]: <T extends Connection | Shape>(val: T)
         obj.notice = element.configData.checkData.inform
         obj.isNext = element.configData.checkData.appointChecker ? '1' : '2'
         obj.isTitle = element.configData.checkData.manualTitle ? '1' : '2'
+        obj.isSaveDraftValid = element.configData.checkData.isSaveDraftValid ? '0' : '1'
         obj.appointSetUser = element.configData.checkData.manualChecker ? '2' : '1'
         //保存节点表单设置
         setWfForm(obj, element.configData.pointFormData[0])
@@ -1401,9 +1472,36 @@ const saveNodesAndLines: { [key: string]: <T extends Connection | Shape>(val: T)
             height: element.height,
             name: element.name,
             auditors: <any[]>[],
+            formCode: '',
+            appointSetUser: '',
+            childFlow: '',
+            childType: '',
+            notice: '',
+            operationType: '',
+            dbId: '',
+            strSql: '',
+            strSqlR: '',
+            strInterface: '',
+            strInterfaceR: ''
         }
+        obj.appointSetUser = element.configData.checkData.manualChecker ? '2' : '1'
+        obj.childFlow = element.configData.checkData.childFlowName
+        obj.childType = element.configData.checkData.childType
+        obj.notice = element.configData.checkData.inform
+        obj.operationType = element.configData.advanceData.category.toLowerCase()
+        obj.dbId = element.configData.advanceData.database
+        obj.strSql = element.configData.advanceData.agreeSQL
+        obj.strSqlR = element.configData.advanceData.disagreeSQL
+        obj.strInterface = element.configData.advanceData.agreePort
+        obj.strInterfaceR = element.configData.advanceData.disagreePort
+        const config = element.configData.pointFormData[0]
+        obj.formCode = config.formType == '2' ? config.rowsData.FormNo : config.formType == '1' ? config.rowsData.F_No : config.rowsData.value
+        let hasError;
+        // obj.formCode = obj.wfForms[0].formcode
+        //保存审核者
+        hasError = setAuditors(element, obj)
         scheme.nodes.push(obj)
-        return false
+        return hasError
     },
     'bpmn:EndEvent': (element) => {
         let obj = {
@@ -1429,7 +1527,7 @@ const setWfForm = (obj, configData) => {
         formId: config.formType == '2' ? config.pcView : config.rowsData.value,
         viewId: config.pcView,
         formcode: config.formType == '2' ? config.rowsData.FormNo : config.formType == '1' ? config.rowsData.F_No : config.rowsData.value,
-        appViewId: config.mtView,
+        appViewId: config.mtView == 'relevancePCView' ? config.pcView : config.mtView,
         field: config.relevanceField,
         systemmenu: config.formType == '0' ? config.rowsData.id : '',
         id_systemmenucode: config.formType == '0' ? config.rowsData.value : '',
@@ -1441,7 +1539,8 @@ const setWfForm = (obj, configData) => {
         formNo: config.formType == '0' ? config.rowsData.value : '',
         authorize: {}
     }
-    config.fieldData.map(item => {
+    let fieldData = JSON.parse(JSON.stringify(config.fieldData))
+    fieldData.map(item => {
         item.isEdit = item.isEdit ? 1 : 0
         item.isLook = item.isLook ? 1 : 0
         item.isNotNull = item.isNotNull ? 1 : 0
@@ -1488,88 +1587,97 @@ const linePosition = (element) => {
 const setAuditors = (element, obj) => {
     let auditorsData = element.configData.checkerArr
     let formtype = element.configData.pointFormData![0].formType
-    auditorsData.map(item => {
-        switch (item.seletItem) {
-            case 'company':
-                obj.auditors.push({
-                    cuid: '',
-                    auditorId: item.organizationData[0].id,
-                    auditorName: item.organizationData[0].text,
-                    type: '7',
-                    id: generateUUID()
-                })
-                break;
-            case 'department':
-                obj.auditors.push({
-                    cuid: '',
-                    auditorId: item.organizationData[0].id,
-                    auditorName: item.organizationData[0].text,
-                    type: '8',
-                    id: generateUUID()
-                })
-                break;
-            case 'post':
-                obj.auditors.push({
-                    cuid: '',
-                    auditorId: item.organizationData[0].F_PostId,
-                    auditorName: item.organizationData[0].F_Name,
-                    condition: item.departmentItem.value,
-                    type: '1',
-                    id: generateUUID()
-                })
-                break;
-            case 'role':
-                obj.auditors.push({
-                    cuid: '',
-                    auditorId: item.organizationData[0].F_RoleId,
-                    auditorName: item.organizationData[0].F_FullName,
-                    condition: item.departmentItem.value,
-                    type: '2',
-                    id: generateUUID()
-                })
-                break;
-            case 'user':
-                obj.auditors.push({
-                    cuid: '',
-                    auditorId: item.organizationData[0].F_UserId,
-                    auditorName: item.organizationData[0].F_RealName,
-                    department: item.organizationData[0].F_DepartmentId,
-                    type: '3',
-                    id: generateUUID()
-                })
-                break;
-            case 'executor':
-                obj.auditors.push({
-                    cuid: '',
-                    auditorId: item.inputItem.value,
-                    auditorName: item.inputItem.label,
-                    type: '6',
-                    id: generateUUID()
-                })
-                break;
-            case 'field':
-                obj.auditors.push({
-                    auditorId: `lrsystemdb|${item.fieldForm.name}|${formtype == '2' ? (item.fieldForm.IsMain == '1' ? 'ID' : 'MainId') : item.relativeField.value}|${formtype == '2' ? item.inputItem.FieldCode : item.inputItem.value}|${item.fieldCategory}`,
-                    auditorName: `【${item.fieldForm.name}】${item.inputItem.value}`,
-                    type: '5',
-                    id: generateUUID()
-                })
-                break;
-            case 'reciprocalRole':
-                obj.auditors.push({
-                    cuid: '',
-                    objectId: item.inputItem.value,
-                    relativeId: item.departmentItem.value,
-                    objectId_Text: item.inputItem.label,
-                    relativeId_Text: item.departmentItem.label,
-                    auditorId: item.inputItem.value + '|' + item.departmentItem.value,
-                    auditorName: '[' + item.inputItem.label + ']' + item.departmentItem.label,
-                    type: '9',
-                    id: generateUUID()
-                })
-                break;
-        }
-    })
+    const { validateChecker } = validSubmitData()
+    let emptyData = validateChecker(auditorsData, formtype)
+    if (emptyData) {
+        auditorsData.map(item => {
+            switch (item.seletItem) {
+                case 'company':
+                    obj.auditors.push({
+                        cuid: '',
+                        auditorId: item.organizationData[0].id,
+                        auditorName: item.organizationData[0].text,
+                        type: '7',
+                        id: generateUUID()
+                    })
+                    break;
+                case 'department':
+                    obj.auditors.push({
+                        cuid: '',
+                        auditorId: item.organizationData[0].id,
+                        auditorName: item.organizationData[0].text,
+                        type: '8',
+                        id: generateUUID()
+                    })
+                    break;
+                case 'post':
+                    obj.auditors.push({
+                        cuid: '',
+                        auditorId: item.organizationData[0].F_PostId,
+                        auditorName: item.organizationData[0].F_Name,
+                        condition: item.departmentItem.value,
+                        type: '1',
+                        id: generateUUID()
+                    })
+                    break;
+                case 'role':
+                    obj.auditors.push({
+                        cuid: '',
+                        auditorId: item.organizationData[0].F_RoleId,
+                        auditorName: item.organizationData[0].F_FullName,
+                        condition: item.departmentItem.value,
+                        type: '2',
+                        id: generateUUID()
+                    })
+                    break;
+                case 'user':
+                    obj.auditors.push({
+                        cuid: '',
+                        auditorId: item.organizationData[0].F_UserId,
+                        auditorName: item.organizationData[0].F_RealName,
+                        department: item.organizationData[0].F_DepartmentId,
+                        type: '3',
+                        id: generateUUID()
+                    })
+                    break;
+                case 'executor':
+                    obj.auditors.push({
+                        cuid: '',
+                        auditorId: item.inputItem.value,
+                        auditorName: item.inputItem.label,
+                        type: '6',
+                        id: generateUUID()
+                    })
+                    break;
+                case 'field':
+                    obj.auditors.push({
+                        auditorId: `lrsystemdb|${item.fieldForm.name}|${formtype == '2' ? (item.fieldForm.IsMain == '1' ? 'ID' : 'MainId') : item.relativeField.value}|${formtype == '2' ? item.inputItem.FieldCode : item.inputItem.value}|${item.fieldCategory}`,
+                        auditorName: `【${item.fieldForm.name}】${item.inputItem.value}`,
+                        type: '5',
+                        id: generateUUID()
+                    })
+                    break;
+                case 'reciprocalRole':
+                    obj.auditors.push({
+                        cuid: '',
+                        objectId: item.inputItem.value,
+                        relativeId: item.departmentItem.value,
+                        objectId_Text: item.inputItem.label,
+                        relativeId_Text: item.departmentItem.label,
+                        auditorId: item.inputItem.value + '|' + item.departmentItem.value,
+                        auditorName: '[' + item.inputItem.label + ']' + item.departmentItem.label,
+                        type: '9',
+                        id: generateUUID()
+                    })
+                    break;
+            }
+        })
+        return false
+    }
+    else {
+        return true
+    }
+
 }
 //保存消息回写数据
 const saveMessageWriteBack = (data, obj) => {
@@ -1600,7 +1708,15 @@ const saveMessageWriteBack = (data, obj) => {
     return false
 }
 //保存流程
-const saveFlowData = () => {
+const saveFlowData = (callback?: Function) => {
+    const allElement = allShape.getAll()
+    let noEndShape = allElement.find(item => {
+        return item.type != "bpmn:SequenceFlow" && item.type != "bpmn:IntermediateThrowEvent" &&
+            item.type != "bpmn:EndEvent" && item.outgoing.length == 0 && item.type != "bpmn:Process"
+    })
+    if (noEndShape) {
+        return ElMessage.error(proxy?.maslg(`请将${noEndShape.name}连接至结束节点`))
+    }
     flowBox.value?.validForm(async () => {
         //流程配置项数据保存
         let flowData = flowBox.value?.flowFormData
@@ -1625,7 +1741,7 @@ const saveFlowData = () => {
         scheme.closeDo.F_CloseDoSql = advanceData!.agreeSQL
         scheme.closeDo.F_CloseDoInterface = advanceData!.agreePort
         //将所有流程节点的数据配置转为流程节点属性保存，方便保存后进行回写
-        let hasError
+        let hasError = <any[]>[];
         nodeList.value.map((item: (Shape | Connection)) => {
             if (item.hasOwnProperty('configData')) {
                 modeling?.updateProperties(toRaw(item), {
@@ -1637,9 +1753,14 @@ const saveFlowData = () => {
                     configName: item.name
                 })
             }
-            hasError = saveNodesAndLines[item.type](item)
+            if (saveNodesAndLines.hasOwnProperty(item.type)) {
+                hasError.push(saveNodesAndLines[item.type](item))
+            }
+
         })
-        if (!hasError) {
+        if (hasError.every(item => {
+            return item == false
+        })) {
             //保存bpmn流程图中数据为xml格式，并转换为Json格式保存到数据库中
             await bpmnModeler.saveXML({ format: true }).then((res: any) => {
                 scheme.bpmXml = res.xml
@@ -1661,31 +1782,85 @@ const saveFlowData = () => {
                 text: '保存中',
                 background: 'rgba(0, 0, 0, 0.7)',
             })
+            schemeInfo = {
+                cuid: '',
+                F_SchemeId: '',
+                F_Code: '',
+                F_Name: '',
+                F_Category: '',
+                F_Mark: '',
+                F_IsInApp: '',
+                DisagreeSaveData: '',
+                F_CloseDoType: '',
+                F_CloseDoDbId: '',
+                F_CloseDoSql: '',
+                F_CloseDoIocName: '',
+                F_CloseDoInterface: '',
+                F_Description: ''
+            }
+            scheme = {
+                nodes: <object[]>[],
+                lines: <object[]>[],
+                DisagreeSaveData: {
+                    DisagreeSaveData: '',
+                },
+                closeDo: {
+                    F_CloseDoType: '',
+                    F_CloseDoDbId: '',
+                    F_CloseDoSql: '',
+                    F_CloseDoIocName: '',
+                    F_CloseDoInterface: '',
+
+                },
+                bpmXml: ''
+            }
             basicApi.saveFlowData(formData).then((res: any) => {
                 loading.close()
                 if (res.code == 200) {
+                    if (location.href.indexOf('?') == -1) {
+                        location.href = location.href + `?keyValue=${res.data}&shcemeCode=${flowData?.code}`
+                    }
+                    if (callback) {
+                        callback && callback()
+                    }
                     ElMessage({
                         type: 'success',
                         message: proxy?.maslg('保存成功')
                     })
+                    saveParam.keyValue = res.data
+                    basicApi.getFlowSchemeData({ code: flowData?.code }).then((res: any) => {
+                        if (res.code == 200) {
+                            schemeInfo.F_SchemeId = res.data.info.F_SchemeId
+                        }
+                    }).catch(err => {
+
+                    })
+                    // saveParam.keyValue = res.data
+
+                }
+                else {
+                    ElMessage({
+                        type: 'error',
+                        message: proxy?.maslg(res.info)
+                    })
                 }
             }).catch(err => {
-                loading.close()
+                console.log(err);
+
                 ElMessage({
                     type: 'error',
                     message: proxy?.maslg('保存流程失败')
                 })
+                loading.close()
             })
         }
-
     })
-
-    //  bpmnModeler.saveXML({ format:true })
-    // console.log(bpmnModeler.saveXML({ format: true }));
-
 }
+(window as any)['saveDesignFlow'] = saveFlowData
 let closeWindow = true
 const closeFlow = () => {
+
+    window.removeEventListener('beforeunload', handleWindowClose);
     ElMessageBox.confirm(proxy?.maslg('是否确认关闭设计器?'), proxy?.maslg('提示'), {
         confirmButtonText: proxy?.maslg('确认'),
         cancelButtonText: proxy?.maslg('取消'),
@@ -1712,15 +1887,31 @@ let handleWindowClose = (event) => {
     }
     return '关闭提示'
 }
+const keyDownEvent = (event: KeyboardEvent) => {
+    if (event.code == 'Backspace' && event.target == document.body) {
+        deletePoint()
+    }
+}
+let definePointFormData: pointFormData[] = []
+let hiddenOrshow = ref(false)
 onMounted(async () => {
-    let paramsObj: { keyValue?: string, shcemeCode?: string } = getUrlParams(['keyValue', 'shcemeCode'])
+    document.addEventListener('keydown', keyDownEvent)
+    let paramsObj: {
+        keyValue?: string, shcemeCode?: string, editsource?: string, formDeployId?: string, isHideSave?: string
+    } = getUrlParams(['keyValue', 'shcemeCode', 'editsource', 'formDeployId', 'isHideSave'])
+    if (paramsObj.hasOwnProperty('isHideSave') && paramsObj.isHideSave == '1') {
+        hiddenOrshow.value = true
+    }
+    else {
+        hiddenOrshow.value = false
+    }
     if (paramsObj.hasOwnProperty('keyValue') && paramsObj.hasOwnProperty('shcemeCode')) {
+        saveParam.keyValue = paramsObj.keyValue as string
         const loading = ElLoading.service({
             lock: true,
-            text: '加载中',
+            text: proxy?.maslg('加载中'),
             background: 'rgba(0, 0, 0, 0.7)',
         })
-        saveParam.keyValue = paramsObj.keyValue as string
         await basicApi.getFlowSchemeData({ code: paramsObj.shcemeCode }).then((res: any) => {
             loading.close()
             if (res.code == 200 && res.data) {
@@ -1731,7 +1922,7 @@ onMounted(async () => {
                     code: data.info.F_Code,
                     category: data.info.F_Category,
                     platform: data.info.F_IsInApp == '0' ? ["2", '1'] : data.info.F_IsInApp == '1' ? ['1'] : ['2'],
-                    validateForm: schemeData.DisagreeSaveData == '1' ? true : false,
+                    validateForm: schemeData.DisagreeSaveData.DisagreeSaveData == '1' ? true : false,
                     canagent: data.info.F_Mark == '1' ? true : false,
                     remark: data.info.F_Description
                 }
@@ -1748,7 +1939,79 @@ onMounted(async () => {
                     flowBox.value!.advanceData[i] = advanceData[i]
                 }
                 schemeInfo.F_SchemeId = data.info.F_SchemeId
-                designStr = schemeData.bpmXml
+                if (schemeData.bpmXml) {
+                    designStr = schemeData.bpmXml
+                }
+                else {
+                    designStr = xmlStr
+                    if (!paramsObj.hasOwnProperty('editsource')) {
+                        ElMessage({
+                            type: 'error',
+                            message: proxy?.maslg('获取流程模板失败')
+                        })
+                    }
+                }
+                if (paramsObj.hasOwnProperty('editsource') && paramsObj.hasOwnProperty('formDeployId')) {
+                    new Promise((resolve, reject) => {
+                        basicApi.getDeployData({ keyValue: paramsObj.formDeployId }).then((res: any) => {
+                            if (res.code == 200) {
+                                resolve(res.data)
+                            }
+                            else {
+                                ElMessage({
+                                    type: 'error',
+                                    message: proxy?.maslg(res.info)
+                                })
+                            }
+                        }).catch(err => {
+                            ElMessage({
+                                type: 'error',
+                                message: proxy?.maslg('获取表单数据失败')
+                            })
+                        })
+                    }).then((resolve: any) => {
+                        basicApi.getXANForm({ keyValue: resolve.FormId }).then((res: any) => {
+                            if (res.code == 200 && res.data.XA_NForm) {
+                                res.data.XA_NForm['formType'] = 'workForm'
+                                res.data.XA_NForm['label'] = res.data.XA_NForm.FormName
+                                res.data.XA_NForm['value'] = res.data.XA_NForm.ID
+                                definePointFormData = [{
+                                    formType: '2',
+                                    selectForm: res.data.XA_NForm.FormName,
+                                    pcFormAddress: '/pages/smartform/render/form.html?' + `id=${resolve.PcViewId}&formId=${resolve.FormId}`,
+                                    mtFormAddress: resolve.AppViewId ? '/pages/smartform/render/form.html?' + `id=${resolve.AppViewId}&formId=${resolve.FormId}` : '',
+                                    pcView: resolve.PcViewId,
+                                    mtView: resolve.AppViewId,
+                                    relevanceField: '',
+                                    rowsData: res.data.XA_NForm,
+                                    tabsData: [],
+                                    fieldData: [],
+                                    customData: {},
+                                    pcviewOptionData: [],
+                                    mtViewData: [],
+                                    cutomFieldData: []
+                                }]
+                                // console.log(definePointFormData);
+
+                            }
+                            else {
+                                ElMessage({
+                                    type: 'error',
+                                    message: proxy?.maslg(res.info)
+                                })
+                            }
+
+                        }).catch(err => {
+                            console.log(err);
+
+                            ElMessage({
+                                type: 'error',
+                                message: proxy?.maslg('获取表单详细信息失败')
+                            })
+                        })
+                    })
+
+                }
             }
         }).catch(err => {
             designStr = xmlStr
@@ -1762,15 +2025,14 @@ onMounted(async () => {
     else {
         designStr = xmlStr
     }
-    initDesign()
     await nextTick()
+    initDesign()
     designContainer = document.querySelector('.djs-parent')
     //关闭前进行提示
     window.addEventListener('beforeunload', handleWindowClose)
-
-
 })
 onUnmounted(() => {
+    document.removeEventListener('keydown', keyDownEvent)
     window.removeEventListener('beforeunload', handleWindowClose);
 })
 // import main from '@/components/main/index.vue'

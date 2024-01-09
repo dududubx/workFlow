@@ -10,11 +10,7 @@ const Regcharacter: Directive = {
             if (canReg) {
                 inputEl.value = inputEl.value.replace(/\s/g, '')
                 let val = inputEl.value
-                // console.log(inputEl.value);
                 inputEl.value = val.replace(regRule, '')
-                // if (inputEl.className == 'el-input__inner' && inputEl.value.length > maxlength) {
-                //     inputEl.value = inputEl.value.substr(0, maxlength)
-                // }
             }
 
         }

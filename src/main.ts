@@ -15,12 +15,14 @@ import dispatchEventStroage from '@/utils/watchLocalStorage'
 import { createPinia } from 'pinia'
 import router from './router'
 import Regcharacter from './directive/inputCharacter'
+import { vDebounce } from './directive/debounce'
 
 const app = createApp(App)
 app.config.globalProperties.maslg = (text: string) => {
     return ((window as any).maslg && (window as any).maslg.get(text)) || text
 }
-app.config.globalProperties.maxlength = 50
+app.config.globalProperties.maxlength = (window as any).maxlength
+// app.config.globalProperties.informData = piniaStore().informData
 declare module '@vue/runtime-core' {
     export interface ComponentCustomProperties {
         maslg: (text: string) => string,
@@ -28,9 +30,12 @@ declare module '@vue/runtime-core' {
     }
 }
 
+
 const pinia = createPinia()
 app.component('content-box', contentBox)
 app.use(dispatchEventStroage)
 app.use(router)
 app.directive('regCharacter', Regcharacter)
+app.directive('debounce', vDebounce)
 app.use(ElementPlus).use(pinia).component('TreeFilter', TreeFilter).mount('#app')
+

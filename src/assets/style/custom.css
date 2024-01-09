@@ -3,13 +3,16 @@
     width: 60px;
     position: fixed !important;
     top: 65px !important;
+    border-radius:6px !important;
+    border: 0 !important;
+    box-shadow:0px 0px 6px rgba(0, 0, 0, 0.1);
 }
 .djs-palette-entries{
     height: 100%;
     width: 100%;
     display: flex;
     background:#ffffff;
-    border-radius:4px;
+    border-radius:6px;
     box-shadow:0px 0px 6px rgba(0, 0, 0, 0.1);
     flex-direction: column;
 }
@@ -40,6 +43,7 @@
 .otherContainer{
     width: 100%;
     height: 100%;
+    border-radius: 50%;
 }
 .svgIcon{
     height: 35px;
@@ -142,7 +146,7 @@
 .bjs-breadcrumbs{
     display: none;
 }
-.djs-parent{
+.djs-parent:hover{
     overflow: auto !important;
 }
 .djs-parent svg[data-element-id='Process_1']{
@@ -150,13 +154,14 @@
     height: 500% !important;
     overflow: scroll !important;
 }
+
 #canvas{
     overflow: scroll !important;
 }
-.djs-minimap{
+.design-center_container .djs-minimap{
     position: fixed !important;
-    /* right: 480px !important; */
-    top: 60px !important;
+    right: 480px;
+    top: calc(100% - 205px) !important;
 }
 .djs-minimap.open .toggle{
     display: none;
@@ -164,6 +169,80 @@
 .djs-minimap:not(.open) .toggle{
     display: none;
 }
+.pane_container .djs-parent{
+    overflow: hidden !important;
+}
+.pane_container .djs-parent:hover{
+    overflow: auto !important;
+}
+.pane_container .djs-parent svg[data-element-id='Process_1']{
+    width: 500% !important;
+    height: 500% !important;
+}
+.container_box .djs-parent{
+    overflow: auto !important;
+}
+.container_box .djs-minimap{
+    position: fixed !important;
+    top: calc(100% - 205px) !important;
+}
+.test{
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 100px;
+    background-color: black;
+    color: red;
+}
+.djs-shape:hover .test{
+    display: block ;
+}
+.show_checker{
+    display: flex;
+    /* align-items: center; */
+    flex-direction: column;
+    border: 1px solid #212930;
+    border-radius: 2px;
+    min-height: 80px;
+    min-width: 120px;
+}
+.show_checker::before{
+    content: '';
+    border-top: 1px solid ;
+    border-left: 1px solid;
+    border-color: #212930;
+    left: calc(50% - 5px);
+    top: -7px;
+    height: 10px;
+    width: 10px;
+    position: absolute;
+    transform: rotate(45deg);
+}
+.hoverChecker_text{
+    font-size: 12px;
+    color: #333;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 100%;
+    /* position: relative;   */
+}
+.hoverChecker_top{
+    font-size: 14px;
+    height: 25px;
+    line-height: 25px;
+    text-align: center;
+    border-bottom: 1px dashed #212930;
+}
+.hover_name{
+    padding-left: 5px;
+    line-height: 20px;
+    height: 20px;
+}
+/* .pane_container .djs-palette{
+    display: none !important;
+
+} */
 /* .djs-label{
     display: none;
 } */

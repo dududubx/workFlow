@@ -16,8 +16,8 @@
                     </el-form-item>
                     <el-form-item prop="lineStrategy" :label="maslg('连线通过策略')" v-if="showConfig">
                         <el-radio-group v-model="lineData.lineStrategy" class="line_radio">
-                            <el-radio label="agree">{{ maslg('线条起始节点【同意】') }}</el-radio>
-                            <el-radio label="disagree">{{ maslg('线条起始节点【不同意】') }}</el-radio>
+                            <el-radio label="agree">{{ maslg(changeRadio ? '是' : '线条起始节点【同意】') }}</el-radio>
+                            <el-radio label="disagree">{{ maslg(changeRadio ? '否' : '线条起始节点【不同意】') }}</el-radio>
                             <el-radio label="allthrough">{{ maslg('所有情况都通过') }}</el-radio>
                         </el-radio-group>
                     </el-form-item>
@@ -44,6 +44,7 @@ const props = defineProps<{
 }>()
 const collapseClick = ref('0')
 const showConfig = ref(true)
+const changeRadio = ref(false)
 watch(() => props.clickElement, (val) => {
     if (val) {
         collapseClick.value = '0'
@@ -52,6 +53,12 @@ watch(() => props.clickElement, (val) => {
         }
         else {
             showConfig.value = true
+        }
+        if (val.source.type == 'bpmn:ParallelGateway') {
+            changeRadio.value = true
+        }
+        else {
+            changeRadio.value = false
         }
     }
 }, {
@@ -67,9 +74,9 @@ const lineForm = ref<FormInstance>()
 //     lineStrategy: ''
 // })
 const lineFormRules = reactive<FormRules<lineForm>>({
-    name: [{
-        required: true, message: proxy?.maslg('请输入连线名称'), trigger: 'blur'
-    }]
+    // name: [{
+    //     required: true, message: proxy?.maslg('请输入连线名称'), trigger: 'blur'
+    // }]
 })
 
 const changeWhiteColor = (val) => {

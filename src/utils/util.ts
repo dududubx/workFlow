@@ -1,6 +1,7 @@
 import { isArray } from "@/utils/is";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 import { unescape } from "querystring";
+import { T } from "ramda";
 // import router from "@/routers/index";
 
 /**
@@ -743,14 +744,31 @@ export function bindGridCellFormatter(type, op, dataRow) {
  * @description 获取href中的参数
  * @param {string[]} params 要获取的参数数组
  */
-export function getUrlParams(params: string[]) {
-	let paramsObj = {}
-	params.map(item => {
+
+export function getUrlParams<T extends string>(params: T[]) {
+	let paramsObj = <{ [key in T]: string }>{}
+	params.map((item: string) => {
 		let reg = new RegExp('(^|&)' + item + '=([^&]*)(&|$)')
-		let r = window.location.search.substr(1).match(reg)
+		let r = window.location.href.slice(window.location.href.indexOf('?') + 1).match(reg)
 		if (r != null) {
+			if (r[2].indexOf('#') > -1) {
+				r[2] = r[2].slice(0, r[2].indexOf('#'))
+			}
 			paramsObj[item] = decodeURIComponent(r[2])
 		}
 	})
 	return paramsObj
+}
+
+export function confirmBox(content: string, callback: Function) {
+	ElMessageBox.confirm((window as any).maslg.get(content), (window as any).maslg.get('提示'), {
+		cancelButtonText: (window as any).maslg.get('取消'),
+		confirmButtonText: (window as any).maslg.get('确定'),
+		cancelButtonClass: 'cancel_btn',
+		type: 'warning'
+	}).then(() => {
+		callback && callback()
+	}).catch((err) => {
+		ElMessage.info((window as any).maslg.get('已取消'))
+	})
 }

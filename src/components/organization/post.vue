@@ -20,7 +20,7 @@
 						<el-row>
 							<el-col :span="8">
 								<el-form-item :label="maslg('名称/编码')" prop="keyword">
-									<el-input v-regCharacter :maxlength="maxlength" placeholder=""
+									<el-input v-regCharacter v-debounce="SearchClick" :maxlength="maxlength" placeholder=""
 										v-model="searchList.keyword" clearable></el-input>
 								</el-form-item>
 							</el-col>
@@ -40,11 +40,12 @@
 				<template v-slot:main-content>
 					<div class="mas-mainBox">
 						<div class="main-left">
-							<span>{{ maslg('岗位信息') }}</span>
+							<span class="main-right_title">{{ maslg('岗位信息') }}</span>
 							<el-table row-key="F_PostId" class="mas-operate" :data="state.tableData" ref="multipleTable"
 								tooltip-effect="light" border :header-cell-style="{ fontSize: '13px' }"
 								highlight-current-row @row-click="rowClick" @row-dblclick="Handdblclick"
-								@selection-change="handleSelectionChange" :expand-row-keys="expandTable">
+								@selection-change="handleSelectionChange" :expand-row-keys="expandTable"
+								:empty-text="maslg('无数据')">
 								<el-table-column v-if="state.type == 2" type="selection" width="50" align="center" />
 
 								<el-table-column v-for="item in tableHeader" :key="item.F_EnCode" :prop="item.F_EnCode"
@@ -58,16 +59,20 @@
 							<el-button type="primary" :icon="ArrowLeftBold" @click="removeLeft" />
 						</div>
 						<div class="main-right">
-							<span>{{ maslg('已选岗位') }}</span>
-							<el-table class="mas-FinishOperate" :data="state.FinishtableData" ref="FinishtableData"
-								tooltip-effect="light" border :header-cell-style="{ fontSize: '13px' }"
-								highlight-current-row @row-click="finishRowClick" @selection-change="FinishtableDataChange"
-								@row-dblclick="Finishdblclick">
-								<el-table-column v-if="state.type == 2" type="selection" width="50" align="center" />
-								<el-table-column v-for="item in tableHeader" :key="item.F_EnCode" :prop="item.F_EnCode"
-									:label="item.F_FullName" :show-overflow-tooltip="true" align="left" :width="item.width">
-								</el-table-column>
-							</el-table>
+							<span class="main-right_title">{{ maslg('已选岗位') }}</span>
+							<el-config-provider :locale="locale">
+								<el-table class="mas-FinishOperate" :data="state.FinishtableData" ref="FinishtableData"
+									tooltip-effect="light" border :header-cell-style="{ fontSize: '13px' }"
+									highlight-current-row @row-click="finishRowClick"
+									@selection-change="FinishtableDataChange" @row-dblclick="Finishdblclick"
+									:empty-text="maslg('无数据')">
+									<el-table-column v-if="state.type == 2" type="selection" width="50" align="center" />
+									<el-table-column v-for="item in tableHeader" :key="item.F_EnCode" :prop="item.F_EnCode"
+										:label="item.F_FullName" :show-overflow-tooltip="true" align="left"
+										:width="item.width">
+									</el-table-column>
+								</el-table>
+							</el-config-provider>
 						</div>
 					</div>
 				</template>
@@ -92,7 +97,7 @@ import { organization } from "@/api/OrganizationModule";
 import { ElMessage, ElTree } from "element-plus";
 import { getTableTree } from "@/utils/util";
 import { FormInstance, TableInstance } from "element-plus";
-
+import { setLanguage } from '@/hooks/setLanguage'
 interface propsType {
 	type: number,
 	title: string,
@@ -110,6 +115,7 @@ const props = withDefaults(defineProps<propsType>(), {
 	width: '95%',
 	isCallBackColse: false
 })
+const { locale } = setLanguage()
 const ruleFormRef = ref<FormInstance>();
 const { proxy } = <ComponentInternalInstance>getCurrentInstance();
 const currentPage4 = ref(1);

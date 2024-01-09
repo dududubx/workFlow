@@ -35,7 +35,7 @@
                     </el-form-item>
                     <div class="switch_tip">{{ maslg('(支持在‘我的代办’中发起该流程)') }}</div>
                     <el-form-item :label="maslg('备注:')" prop="remark" class="remark_item" label-width="60px">
-                        <el-input v-regCharacter type="textarea" v-model="flowFormData.remark" :autosize="{ minRows: 3 }"
+                        <el-input type="textarea" v-model="flowFormData.remark" :autosize="{ minRows: 3 }"
                             :placeholder="maslg('请输入备注')"></el-input>
                     </el-form-item>
                 </div>
@@ -58,14 +58,17 @@ import { ElMessage } from 'element-plus'
 import { QuestionFilled } from '@element-plus/icons-vue'
 import advanced from '@/components/advancedConfig/index.vue'
 import { basicApi } from '@/api/basic'
+import { formatDate } from '@/utils/util'
+import { piniaStore } from '@/store'
 const { proxy } = <ComponentInternalInstance>getCurrentInstance()
 
+const store = piniaStore()
 const flowEle = ref<FormInstance>()
 const flowFormData = reactive<RuleForm>({
     name: '',
     code: '',
     category: '',
-    platform: [],
+    platform: ['2', '1'],
     validateForm: true,
     canagent: true,
     remark: ''
@@ -126,6 +129,13 @@ watch(() => operateData.opearteCate, (newVal, oldVal) => {
 }, {
     immediate: true
 })
+watch(() => flowFormData.code, (val) => {
+    if (!val) {
+        flowFormData.code = formatDate(new Date(), 'yyyyMMddhhmmss')
+    }
+}, {
+    immediate: true
+})
 let advanceData = reactive<advancedForm>({
     category: 'sql',
     database: '',
@@ -138,6 +148,7 @@ const validForm = (callback: Function) => {
             callback()
         }
         else {
+            ElMessage.error(proxy?.maslg('部分流程配置项为空'))
             return false
         }
     })
@@ -146,6 +157,11 @@ const categoryData = ref<any[]>([])
 onMounted(() => {
     basicApi.getFlowCategory({ itemCode: 'FlowSort' }).then((res: any) => {
         if (res.code == 200) {
+            res.data.forEach(item => {
+                item['label'] = item.F_ItemName
+                item['value'] = item.F_ItemValue
+            })
+            store.getflowCategory(res.data)
             categoryData.value = res.data
         }
     }).catch(err => {

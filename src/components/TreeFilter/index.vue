@@ -210,16 +210,19 @@ onMounted(() => { });
 		box-sizing: border-box;
 		background-color: var(--el-fill-color-blank);
 		border: 1px solid var(--el-border-color-light);
-		border-radius: 4px;
-		box-shadow: 0 0 12px #0000000d;
+		border-radius: 6px;
+		box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.05);
 
 		.mastitle {
 			padding: 5px 13px;
-			border-bottom: 1px solid #ccc;
+			// border-bottom: 1px solid #ccc;
+			font-family: Hiragino Sans GB;
+			color: #73767a;
+			font-size: 18px;
 		}
 
 		.el-input {
-			padding: 10px;
+			padding: 15px 18px;
 		}
 
 		.mas-tree {

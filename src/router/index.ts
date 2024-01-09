@@ -1,7 +1,8 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router'
 
 const router = createRouter({
-    history: createWebHistory(),
+    // history: createWebHistory('/'),
+    history: createWebHashHistory(),
     routes: [{
         path: '/',
         name: 'index',
@@ -15,18 +16,22 @@ const router = createRouter({
         meta: {
             title: '流程审批'
         },
-        component: () => import('@/views/flowCheck/index.vue')
+        component: () => import('@/views/check/pcCheck/index.vue')
         // components: {
         //     default: () => import('@/views/flowCheck/index.vue'),
         //     test: () => import('@/components/main/index.vue')
         // }
     }, {
-        path: '/sponsor',
-        name: 'sponsorFlow',
+        path: '/view',
+        name: 'view',
         meta: {
-            title: '流程发起',
+            title: '流程预览'
         },
-        component: () => import('@/views/sponsorFlow/index.vue')
+        component: () => import('@/views/viewForm/index.vue')
+    }, {
+        path: '/sign',
+        name: 'sign',
+        component: () => import('@/components/signPage/index.vue')
     }]
 })
 router.beforeEach((to, form, next) => {

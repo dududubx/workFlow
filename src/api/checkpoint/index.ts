@@ -52,5 +52,9 @@ export const checkPointApi = {
     //获取自定义表单的表
     getFormTableList: function (params: object) {
         return http('get', '/XA_Form/XAFormTableSet/GetList', params)
+    },
+    //获取流程模板分页数据
+    getNWFSchemeTable: function (params: object) {
+        return http('get', '/NWFScheme/GetInfoPageList', params)
     }
 }

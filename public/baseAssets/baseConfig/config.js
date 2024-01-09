@@ -61,8 +61,8 @@ var MainVersion = 'V1.0.1_'
     OrgTreeShowType = 'COMPANY'; //组织机构树加载类型(公司:COMPANY,部门:DEPARTMENT)
 if (__TopPageInOrOut('192.168') || __TopPageInOrOut('127.0.0.1')) { //内网
     IsInnerNetwork = false;
-    baseAPI = "http://localhost:55954";
-    iframApi = 'http://localhost:6422'
+    baseAPI = "http://192.168.100.74:3002";
+    iframApi = 'http://192.168.100.74:3001'
     iotAPI = "http://localhost:5000";
     bdAPI = 'http://localhost:52879';
     lcsAPI = 'http://localhost:44346';

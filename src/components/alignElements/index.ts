@@ -183,22 +183,6 @@ AlignElements.prototype._alignmentPosition = function (type, sortedElements) {
     let num = Math.floor(sortedElements.length / 2)
     obj.y = sortedElements[num].y + Math.round(sortedElements[num].height / 2)
     alignment[type] = obj
-    // forEach(sortedElements, function(element:any, index) {
-    //     var delta = {
-    //       x: 0,
-    //       y: 0
-    //     };
-    //     delta.y = (obj.y - element.height)
-    //    if(index != 0 && index != sortedElements.length - 1){
-    //       console.log(index);
-
-    //     //   console.log(sortedElements[index - 1]);
-    //       delta.x = obj.x + sortedElements[index - 1].width + sortedElements[index - 1].x
-    //     }
-    //     console.log( modeling.moveElements([ element ], delta, element.parent));
-    //     // modeling.moveElements([ element ], delta, element.parent);
-    //   });
-
   }
 
   return alignment;
@@ -234,8 +218,6 @@ AlignElements.prototype.trigger = function (elements, type) {
   var sortedElements = sortBy(filteredElements, sortFn);
 
   var alignment = this._alignmentPosition(type, sortedElements);
-  // console.log(sortedElements, alignment);
-  // debugger
   modeling.alignElements(sortedElements, alignment);
   // modeling.prototype.alignElements
 };

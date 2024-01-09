@@ -15,7 +15,7 @@
                             </el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item :label="maslg('自动同意规则')" prop="agreerules" v-if="isTask && !isStart">
+                    <el-form-item :label="maslg('自动同意规则')" prop="agreerules" v-if="isTask && !isStart && !isChildwfnode">
                         <el-select multiple collapse-tags collapse-tags-tooltip v-model="checkerData.checkData!.agreerules"
                             :placeholder="maslg('请选择自动同意规则')" clearable>
                             <el-option :label="maslg('处理人就是提交人')" value="1"></el-option>
@@ -23,10 +23,12 @@
                             <el-option :label="maslg('处理人审批过')" value="3"></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item :label="maslg('审批意见必填')" prop="advice" class="switch_item" v-if="isTask && !isStart">
+                    <el-form-item :label="maslg('审批意见必填')" prop="advice" class="switch_item"
+                        v-if="isTask && !isStart && !isChildwfnode">
                         <el-switch v-model="checkerData.checkData!.advice"></el-switch>
                     </el-form-item>
-                    <el-form-item :label="maslg('允许批量审核')" prop="mutipleCheck" class="switch_item" v-if="!isStart">
+                    <el-form-item :label="maslg('允许批量审核')" prop="mutipleCheck" class="switch_item"
+                        v-if="!isStart && !isChildwfnode">
                         <el-switch v-model="checkerData.checkData!.mutipleCheck"></el-switch>
                     </el-form-item>
                     <el-form-item :label="maslg('手动设置审核人')" prop="manualChecker" class="switch_item hastip_item">
@@ -43,17 +45,23 @@
                         <el-switch v-model="checkerData.checkData!.manualTitle"></el-switch>
                     </el-form-item>
                     <div class="switch_tip" v-if="isStart">{{ maslg('(允许发起流程时设置流程标题)') }}</div>
-                    <el-form-item :label="maslg('允许加签')" prop="countersign" class="switch_item" v-if="isTask && !isStart">
+                    <el-form-item :label="maslg('草稿保存')" v-if="isStart" class="switch_item hastip_item">
+                        <el-switch v-model="checkerData.checkData!.isSaveDraftValid"></el-switch>
+                    </el-form-item>
+                    <div class="switch_tip" v-if="isStart">{{ maslg('(保存草稿时是否验证表单)') }}</div>
+                    <el-form-item :label="maslg('允许加签')" prop="countersign" class="switch_item"
+                        v-if="isTask && !isStart && !isChildwfnode">
                         <el-switch v-model="checkerData.checkData!.countersign"></el-switch>
                     </el-form-item>
-                    <el-form-item :label="maslg('无对应处理人')" prop="conductor" v-if="isTask && !isStart">
+                    <el-form-item :label="maslg('无对应处理人')" prop="conductor" v-if="isTask && !isStart && !isChildwfnode">
                         <el-radio-group v-model="checkerData.checkData!.conductor" class="verticalGroup">
                             <el-radio label="1">{{ maslg('超级管理员处理') }}</el-radio>
                             <el-radio label="2">{{ maslg('跳过此步骤') }}</el-radio>
                             <el-radio label="3">{{ maslg('不能提交') }}</el-radio>
                         </el-radio-group>
                     </el-form-item>
-                    <el-form-item :label="maslg('审核通过策略')" prop="throughStrategy" v-if="isTask && !isStart">
+                    <el-form-item :label="maslg('审核通过策略')" prop="throughStrategy"
+                        v-if="isTask && !isStart && !isChildwfnode">
                         <el-radio-group v-model="checkerData.checkData!.throughStrategy" class="verticalGroup">
                             <el-radio label="1">{{ maslg('只需其中一人审核') }}</el-radio>
                             <el-radio label="2">{{ maslg('所有审核者都需要审核') }}</el-radio>
@@ -88,10 +96,26 @@
                             </el-radio-group>
                         </el-form-item>
                     </div>
+                    <el-form-item :label="maslg('子流程')" prop="childFlowName" v-if="isChildwfnode">
+                        <el-input v-model="checkerData.checkData!.childFlowName" class="select_input center_input"
+                            :readonly="true" @click="openChooseFlowTable">
+                            <template #append>
+                                <el-icon @click="openChooseFlowTable">
+                                    <MoreFilled />
+                                </el-icon>
+                            </template>
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item :label="maslg('子流程执行策略')" prop="childFlowStrategy" v-if="isChildwfnode">
+                        <el-radio-group v-model="checkerData.checkData!.childType" class="verticalGroup">
+                            <el-radio label="1">{{ maslg('同步') }}</el-radio>
+                            <el-radio label="2">{{ maslg('异步') }}</el-radio>
+                        </el-radio-group>
+                    </el-form-item>
 
                 </el-form>
             </el-collapse-item>
-            <el-collapse-item :title="maslg('节点表单设置')" class="collapse_form" name="2">
+            <el-collapse-item :title="maslg('节点表单设置')" class="collapse_form" name="2" v-if="!isChildwfnode">
                 <div class="pointForm" v-for="(item, index) in checkerData.pointFormData" :key="index"
                     @click="pointClick(item)">
                     <div class="formType" :class="isParentForm(item) ? 'flexForm' : ''" :key="index">
@@ -150,7 +174,7 @@
                             {{ maslg('移动端视图') }}
                         </div>
                         <el-select v-model="item.mtView" class="view_select" placeholder=" " @change="mbSelected">
-                            <el-option v-for="mitem in item.pcviewOptionData" :key="mitem.ID" :label="mitem.ViewName"
+                            <el-option v-for="mitem in item.mtViewData" :key="mitem.ID" :label="mitem.ViewName"
                                 :value="mitem.ID"></el-option>
                         </el-select>
                         <el-tooltip :content="maslg('视图预览')" placement="bottom" effect="dark">
@@ -163,7 +187,7 @@
                         <div class="form_name">
                             {{ maslg('关联字段') }}
                         </div>
-                        <el-select v-model="item.relevanceField" placeholder=" " :disabled="isParentForm(item)">
+                        <el-select v-model="item.relevanceField" placeholder=" " :disabled="isParentForm(item)" clearable>
                             <el-option v-for="citem in item.cutomFieldData" :label="citem.title" :value="citem.id"
                                 :key="citem.id"></el-option>
                         </el-select>
@@ -187,8 +211,10 @@
                         </el-button>
                     </div>
                 </div>
-                <el-button class="add_btn form_btn" :icon="Plus" @click="addPointForm"> {{ maslg('添加') }} </el-button>
-                <el-button class="form_btn from_config" :icon="Setting" @click="configurationBtn">
+                <el-button class="add_btn form_btn" :icon="Plus" @click="addPointForm"
+                    v-if="checkerData.pointFormData?.length == 0 || isParentForm(checkerData.pointFormData![0] ?? [])"> {{
+                        maslg('添加') }} </el-button>
+                <el-button class="form_btn from_config" :icon="Setting" @click="configurationBtn" v-if="canSetConfig">
                     {{ maslg('高级配置') }}
                 </el-button>
             </el-collapse-item>
@@ -231,7 +257,7 @@
                             v-show="changeSelectData.hasOwnProperty(item.seletItem)" value-key="value"
                             :placeholder="maslg(item.seletItem == 'field' ? '请选择审核字段' : '请选择')" :key="index"
                             @focus="item.seletItem == 'field' ? choiceFieldForm(item) : showOptions(item)"
-                            @change="selectAuditor">
+                            @change="selectAuditor" :loading="fieldloading">
                             <el-option v-for="(sitem, index) in useSelectData" :key="((sitem.value as string) + index)"
                                 :value="sitem" :label="maslg(sitem.label)">
                                 <div v-if="item.seletItem == 'field'">
@@ -253,7 +279,7 @@
                     </el-input>
                     <el-select v-show="addLastSelect.hasOwnProperty(item.seletItem)" value-key="value"
                         v-model="item.departmentItem" placement="bottom-start" class="right_select"
-                        :placeholder="maslg('请选择')" @focus="changeLastData(item)">
+                        :placeholder="maslg('请选择')" @focus="changeLastData(item)" clearable>
                         <el-option v-for="(ditem, index) in departmentCategory" :label="maslg(ditem.label)" :value="ditem"
                             :key="ditem.value"></el-option>
                     </el-select>
@@ -262,7 +288,7 @@
                 </div>
                 <el-button class="add_btn form_btn" :icon="Plus" @click="addChecker"> {{ maslg('添加') }} </el-button>
             </el-collapse-item>
-            <el-collapse-item :title="maslg('审核超时设置')" name="3" v-if="isTask && !isStart">
+            <el-collapse-item :title="maslg('审核超时设置')" name="3" v-if="isTask && !isStart && !isChildwfnode">
                 <div class="exceed_time time_box">
                     <div class="time_name">
                         {{ maslg('流程在当前节点超过多少小时未处理发出通知') }}
@@ -310,9 +336,19 @@
                     </div>
                 </div>
             </el-collapse-item>
-            <el-collapse-item :title="maslg('审核按钮设置')" name="4" v-if="isTask && !isStart">
+            <el-collapse-item :title="maslg('审核按钮设置')" name="4" v-if="isTask && !isStart && !isChildwfnode">
                 <el-tabs v-model="btnTab">
                     <el-tab-pane :label="maslg('同意')" name="agree" class="agree-tab">
+                        <div class="btn-name">
+                            <div class="btn-tab_name title">
+                                {{ maslg('按钮名称') }}
+                            </div>
+                            <div class=" input_item">
+                                <el-input v-model="checkerData.agreeBtn!.name" clearable :maxlength="maxlength"
+                                    v-regCharacter>
+                                </el-input>
+                            </div>
+                        </div>
                         <div class="btn-tab">
                             <div class="btn-tab_name title">
                                 {{ maslg('隐藏按钮') }}
@@ -342,6 +378,16 @@
                         </div>
                     </el-tab-pane>
                     <el-tab-pane :label="maslg('不同意')" name="disagree" class="disagree-tab">
+                        <div class="btn-name">
+                            <div class="btn-tab_name title">
+                                {{ maslg('按钮名称') }}
+                            </div>
+                            <div class=" input_item">
+                                <el-input v-model="checkerData.disagreeBtn!.name" clearable :maxlength="maxlength"
+                                    v-regCharacter>
+                                </el-input>
+                            </div>
+                        </div>
                         <div class="btn-tab">
                             <div class="btn-tab_name title">
                                 {{ maslg('隐藏按钮') }}
@@ -393,7 +439,8 @@
                     </el-tab-pane>
                 </el-tabs>
             </el-collapse-item>
-            <el-collapse-item :title="maslg('审核消息回写')" class="collapse_form" name="5" v-if="isTask && !isStart">
+            <el-collapse-item :title="maslg('审核消息回写')" class="collapse_form" name="5"
+                v-if="isTask && !isStart && !isChildwfnode">
                 <div class="pointForm" v-for="(item, index) in checkerData.writeBack" :key="index">
                     <div class="write-form">
                         <div class="wirteName title">{{ maslg('回写表单') }}</div>
@@ -498,6 +545,9 @@
                     </el-button>
                 </div>
             </el-collapse-item>
+            <el-collapse-item :title="maslg('高级配置')" name="8" v-if="isChildwfnode && checkerData.advanceData">
+                <advanced v-model:advanceData="checkerData.advanceData"></advanced>
+            </el-collapse-item>
         </el-collapse>
         <el-dialog style="height:260px" :width="400" v-model="dialogFromVisible" :title="maslg('设置表单字段/控件权限')"
             :close-on-click-modal="false" align-center :draggable="true" class="watch_dialog">
@@ -548,15 +598,24 @@
             :height="'82%'" :width="'95%'"></role>
         <user ref="userBox" v-if="!isStart" :type="1" :title="'选择用户'" @chooseReault="comeBackRoleandUser" :userIds="''"
             :height="'82%'" :width="'95%'"></user>
-        <chooseForm ref="chooseBox" @sendClickData="getRowsData"></chooseForm>
-        <authority ref="authorityBox" @sendFieldData="saveFieldData"></authority>
+        <chooseForm ref="chooseBox" @sendClickData="getRowsData" v-if="!isChildwfnode"></chooseForm>
+        <authority ref="authorityBox" @sendFieldData="saveFieldData" v-if="!isChildwfnode"></authority>
+        <dialogTable v-if="isChildwfnode" title="流程表单" ref="diaTable" :tablesApi="checkPointApi.getNWFSchemeTable"
+            :pageSize="[10, 20, 30, 50]" :tableColumn="dialogTaleColumn" :categorData="diaCategoryData"
+            @returnFlowData="returnFlowData">
+            <template #customColumn="{ scope, data }">
+                <div class="operation_content" v-if="data.prop == 'operation'" @click="lookRow(scope.row)">
+                    {{ maslg('查看') }}
+                </div>
+            </template>
+        </dialogTable>
     </div>
 </template>
 
 <script setup lang='ts'>
 import { FormRules, FormInstance, ElMessage, ElTree } from 'element-plus';
 import { MoreFilled, Plus, Delete, Setting } from '@element-plus/icons-vue'
-import { ref, reactive, getCurrentInstance, ComponentInternalInstance, toRef, toRefs, nextTick, Ref, toRaw, watch, computed, useModel } from 'vue'
+import { ref, reactive, getCurrentInstance, ComponentInternalInstance, toRef, toRefs, nextTick, Ref, toRaw, watch, computed, useModel, inject, onUnmounted } from 'vue'
 import { Shape, Connection } from 'bpmn-js/lib/model/Types';
 import company from '../organization/company.vue';
 import department from '../organization/department.vue'
@@ -568,6 +627,11 @@ import authority from '../authority/index.vue'
 import { checkPointApi } from '@/api/checkpoint'
 import { conditionApi } from '@/api/condition'
 import { isArray } from '@/utils/is';
+import { piniaStore } from '@/store'
+import { validSubmitData } from '@/hooks/validateSubmit'
+import advanced from '@/components/advancedConfig/index.vue'
+import dialogTable from '@/components/dialogTable/index.vue'
+import { basicApi } from '@/api/basic'
 const { proxy } = <ComponentInternalInstance>getCurrentInstance()
 defineOptions({
     name: 'cheker'
@@ -577,7 +641,8 @@ const props = defineProps<{
     nodeList: (Shape | Connection)[],
     connectionList: Connection[],
     checkerData: parentCheckData,
-    clickElement: Shape
+    clickElement: Shape,
+    settingDefineFormData: pointFormData[]
 }>()
 // const checkerData = toRef(props, 'checkerData')
 //派发事件
@@ -589,21 +654,43 @@ const emit = defineEmits<{
 const changPointName = () => {
     emit('changPointName', checkerData.value.checkData!.name!)
 }
-//获取checkerData并维持单向数据流
+//获取checkerData并维持单向数据流,所有审核相关数据
 const checkerData = useModel(props, 'checkerData')
 const nodeList = toRef(props, 'nodeList')
 const collapseClick = ref<string[] | string>('1')
 const isTask = ref(true)
 const isStart = ref(false)
+const isChildwfnode = ref(false)
 const isAccordion = ref(true)
 const changeClickElement = ref(false)
+const canSetConfig = ref(false)
+let openTableItem: pointFormData
 watch(() => props.clickElement, async (val) => {
     if (val) {
         changeClickElement.value = true
         val.type == 'bpmn:Task' ? isTask.value = true : isTask.value = false
         val.type == 'bpmn:IntermediateCatchEvent' ? isStart.value = true : isStart.value = false
+        val.type == 'bpmn:UserTask' ? isChildwfnode.value = true : isChildwfnode.value = false
         collapseClick.value = '0'
-        if (checkerData.value.adConfig!.watchFormData.length > 0) {
+        //处理开始节点设置了表单其他节点默认设置相同的表单
+        let startNode = nodeList.value.find(item => {
+            return item.type == 'bpmn:IntermediateCatchEvent'
+        })
+        if (startNode && startNode.configData.pointFormData.length > 0 && checkerData.value.pointFormData && Object.keys(checkerData.value.pointFormData![0]?.rowsData ?? {}).length == 0) {
+            checkerData.value.pointFormData = JSON.parse(JSON.stringify(startNode.configData.pointFormData))
+            openTableItem = checkerData.value.pointFormData![0] ?? []
+        }
+        //用于表单设计后打开流程设计器后自动设置表单
+        if (props.settingDefineFormData.length > 0 && checkerData.value.pointFormData && checkerData.value.pointFormData!.length > 0 && Object.keys(checkerData.value.pointFormData![0]?.rowsData ?? {}).length == 0) {
+            checkerData.value.pointFormData = JSON.parse(JSON.stringify(props.settingDefineFormData))
+            openTableItem = checkerData.value.pointFormData![0] ?? []
+            nextTick(() => {
+                setDifferentFormData['2']()
+            })
+
+        }
+        //回写高级设置增加的表单
+        if (checkerData.value.adConfig && checkerData.value.adConfig!.watchFormData.length > 0) {
             checkerData.value.pointFormData!.map((item, index) => {
                 if (item.rowsData?.value == checkerData.value.pointFormData![0].rowsData?.value && index != 0) {
                     checkerData.value.pointFormData!.splice(index, 1)
@@ -621,7 +708,8 @@ watch(() => props.clickElement, async (val) => {
             })
         }
         await nextTick()
-        if (Object.keys(checkerData.value.pointFormData![0].rowsData!).length > 0) {
+        canSetConfig.value = getParentForm().length > 0 ? true : false
+        if (checkerData.value.pointFormData && Object.keys(checkerData.value.pointFormData![0]?.rowsData ?? {}).length > 0) {
             getDifferentData[checkerData.value.pointFormData![0].formType](checkerData.value.pointFormData![0])
         }
         let hasSetField = checkerData.value.checkerArr?.find(item => {
@@ -635,6 +723,7 @@ watch(() => props.clickElement, async (val) => {
     immediate: true
 })
 let poinData;
+
 //监听到节点表单发生变化后，清空选择的回写表单字段
 watch(() => checkerData.value.pointFormData![0]?.rowsData, async (val) => {
     poinData = checkerData.value.pointFormData![0]
@@ -660,6 +749,7 @@ watch(() => checkerData.value.pointFormData![0]?.rowsData, async (val) => {
         if (poinData.formType != '2') {
             getDifferentData[checkerData.value.pointFormData![0].formType](checkerData.value.pointFormData![0])
         }
+
     }
     changeClickElement.value = false
 }, {
@@ -667,23 +757,32 @@ watch(() => checkerData.value.pointFormData![0]?.rowsData, async (val) => {
     deep: true,
     // flush: 'post'
 })
-watch(() => checkerData.value.pointFormData![0].pcView, (val) => {
+watch(() => checkerData.value.pointFormData![0]?.pcView, (val) => {
     if (val) {
         getDifferentData[checkerData.value.pointFormData![0].formType](checkerData.value.pointFormData![0])
     }
 })
-const validCollapse = (active: string, message: string) => {
+
+
+
+const validCollapse = (active: string, message: string, showMessage: boolean) => {
     collapseClick.value = [active]
     isAccordion.value = false
-    return ElMessage({
-        type: 'error',
-        message: proxy?.maslg(message)
-    })
+    if (showMessage) {
+        return ElMessage({
+            type: 'error',
+            message: proxy?.maslg(message)
+        })
+    }
+    else {
+        return false
+    }
+
 }
 const validRowsData = {
     '2': () => {
         if (!checkerData.value.pointFormData![0].pcView) {
-            return validCollapse('2', '请选择节点视图')
+            return validCollapse('2', '请选择节点视图', true)
         }
         // else {
         //     return true
@@ -692,7 +791,7 @@ const validRowsData = {
     },
     '1': () => {
         if (!checkerData.value.pointFormData![0].relevanceField) {
-            return validCollapse('2', '请选择关联字段')
+            return validCollapse('2', '请选择关联字段', true)
         }
     },
     '0': () => {
@@ -701,11 +800,18 @@ const validRowsData = {
 }
 const changeCollapse = (active: string | string[]) => {
     isAccordion.value = true
-    if (Object.keys(checkerData.value.pointFormData![0].rowsData!).length > 0) {
+    if (checkerData.value.pointFormData && checkerData.value.pointFormData!.length > 0 && Object.keys(checkerData.value.pointFormData![0].rowsData!).length > 0) {
         if (!checkerData.value.pointFormData![0].pcFormAddress) {
-            return validCollapse('2', 'pc端表单地址不能为空')
+            return validCollapse('2', 'pc端表单地址不能为空', true)
         }
         validRowsData[checkerData.value.pointFormData![0].formType]()
+    }
+    const { validateChecker } = validSubmitData()
+    if (checkerData.value.checkerArr && checkerData.value.checkerArr.length > 0) {
+        let hasEmptyChecker = validateChecker(checkerData.value.checkerArr, checkerData.value.pointFormData![0].formType)
+        if (!hasEmptyChecker) {
+            return validCollapse('1', '', false)
+        }
     }
     if (active.length > 0 && isArray(active)) {
         collapseClick.value = active[active.length - 1]
@@ -734,26 +840,14 @@ const checkForm = ref<FormInstance>()
 const checkRules = reactive<FormRules<checkData>>({
     name: [{
         required: true, message: proxy?.maslg('请输入节点名称'), trigger: 'blur'
+    }],
+    childFlowName: [{
+        required: true, message: proxy?.maslg('请选择子流程'), trigger: 'blur'
     }]
 })
 //获取通知策略选择框数据
-const informData = ref<informData[]>([])
-checkPointApi.getNoticeData({}).then((res: any) => {
-    if (res.code == 200) {
-        informData.value = res.data
-    }
-    else {
-        ElMessage({
-            type: 'error',
-            message: res.info
-        })
-    }
-}).catch(err => {
-    ElMessage({
-        type: 'error',
-        message: '获取通知策略数据失败'
-    })
-})
+const informData = piniaStore().informData
+
 
 
 
@@ -761,7 +855,7 @@ checkPointApi.getNoticeData({}).then((res: any) => {
 //新增节点审核者
 const addChecker = () => {
     checkerData.value.checkerArr!.push({
-        seletItem: '',
+        seletItem: props.clickElement.type == 'bpmn:UserTask' ? 'user' : '',
         inputItem: '',
         departmentItem: '',
         organizationData: [],
@@ -776,7 +870,7 @@ const deleteChecker = (index: number) => {
     checkerData.value.checkerArr!.splice(index, 1)
 }
 //审核者分类
-const checkerCategory: checkerCategory = [{
+let checkerCategory: checkerCategory = [{
     value: "company",
     label: '公司'
 }, {
@@ -802,6 +896,12 @@ const checkerCategory: checkerCategory = [{
     value: 'reciprocalRole',
     label: '相对角色'
 }]
+if (props.clickElement.type == 'bpmn:UserTask') {
+    checkerCategory = [{
+        value: 'user',
+        label: '人员'
+    }]
+}
 //判断是否为岗位、角色以及相对角色人员
 const addLastSelect = {
     'role': () => {
@@ -872,7 +972,7 @@ const changeSelectData: Object = {
     'executor': () => {
         useSelectData.value = []
         nodeList.value.map(item => {
-            if (item.type != "bpmn:EndEvent" && item.type != "bpmn:SequenceFlow") {
+            if (item.type != "bpmn:EndEvent" && item.type != "bpmn:SequenceFlow" && item.id != props.clickElement.id) {
                 useSelectData.value.push({
                     value: item.id,
                     label: item.name
@@ -892,7 +992,7 @@ const changeSelectData: Object = {
             label: '发起人'
         })
         props.connectionList.map(item => {
-            if (item.type != "bpmn:EndEvent" && item.type != 'bpmn:IntermediateCatchEvent') {
+            if (item.type == 'bpmn:Task' && item.configData.pointFormData.length > 0) {
                 useSelectData.value.push({
                     value: item.id,
                     label: item.name
@@ -901,13 +1001,19 @@ const changeSelectData: Object = {
         })
     }
 }
+const fieldloading = ref(false)
+let getApiFieldData = false
 const selectFieldForm = (val) => {
     if (checkerData.value.pointFormData![0].formType == '2') {
         useSelectData.value = val.TableFieldList
     }
     else {
+        getApiFieldData = false
+        fieldloading.value = true
         conditionApi.getFieldList({ dbCode: 'lrsystemdb', tableName: val.name }).then((res: any) => {
+            fieldloading.value = false
             if (res.code == 200) {
+                getApiFieldData = true
                 res.data.map(item => {
                     item['label'] = item.f_remark
                     item['value'] = item.f_column
@@ -916,6 +1022,7 @@ const selectFieldForm = (val) => {
             }
 
         }).catch(err => {
+            fieldloading.value = false
             ElMessage({
                 type: 'error',
                 message: proxy?.maslg('获取表字段失败')
@@ -951,7 +1058,7 @@ const showOptions = (item: checkerArr) => {
 let checkerField;
 const choiceFieldForm = (item) => {
     checkerField = item
-    if (useSelectData.value.length == 0) {
+    if (useSelectData.value.length == 0 && !fieldloading.value && !getApiFieldData) {
         return ElMessage({
             type: 'error',
             message: proxy?.maslg('请先选择表')
@@ -1032,7 +1139,7 @@ const comeBackRoleandUser = (val, tree) => {
 //删除节点表单
 const delPointForm = (cindex) => {
     checkerData.value.adConfig!.watchFormData.map((item, index) => {
-        if (item == checkerData.value.pointFormData![cindex].rowsData?.value) {
+        if (item == checkerData.value.pointFormData![cindex].rowsData?.value! + index) {
             checkerData.value.adConfig!.watchFormData.splice(index, 1)
         }
     })
@@ -1070,7 +1177,7 @@ const addPointForm = () => {
 //系统表单弹窗
 const systemFormDialog = ref(false)
 const chooseBox = ref<InstanceType<typeof chooseForm>>()
-let openTableItem: pointFormData
+
 //获取到当前表单的实例
 const pointClick = (val: pointFormData) => {
     openTableItem = val
@@ -1088,6 +1195,7 @@ const openChooseForm = (val: pointFormData) => {
 const setDifferentFormData: isOrganization = {
     '2': () => {
         getViewData(openTableItem, 'PC')
+        getViewData(openTableItem, 'MB')
     },
     '0': () => {
 
@@ -1109,7 +1217,6 @@ const getRowsData = (val: tableData) => {
     openTableItem.cutomFieldData = []
     openTableItem.selectForm = openTableItem.formType == '2' ? (val.FormName as string) : openTableItem.formType == '1' ? (val.F_Name as string) : ''
     setDifferentFormData[openTableItem.formType]()
-
 }
 //切换表单类型
 const changeType = (val) => {
@@ -1139,7 +1246,16 @@ const getViewData = async (val: pointFormData, plat: string) => {
         }
         checkPointApi.getSmartFormViewList(params).then((res: any) => {
             if (res.code == 200) {
-                openTableItem.pcviewOptionData = res.data
+                if (plat == 'PC') {
+                    openTableItem.pcviewOptionData = res.data
+                }
+                else {
+                    openTableItem.mtViewData = res.data
+                    openTableItem.mtViewData.unshift({
+                        ViewName: '关联pc端视图',
+                        ID: 'relevancePCView'
+                    })
+                }
             }
 
         }).catch(err => {
@@ -1150,15 +1266,20 @@ const getViewData = async (val: pointFormData, plat: string) => {
 //pc视图选择框
 const pcSelected = (val: any) => {
     if (val) {
-        openTableItem.mtView = val
-        openTableItem.pcFormAddress = '/pages/smartform/render/index.html?' + `id=${val}&formId=${openTableItem.rowsData?.ID}`
-        mbSelected(val)
+        if (openTableItem?.mtView == 'relevancePCView') {
+            openTableItem.mtFormAddress = '/pages/smartform/render/form.html?' + `id=${val}&formId=${openTableItem.rowsData?.ID}`
+        }
+        openTableItem.pcFormAddress = '/pages/smartform/render/form.html?' + `id=${val}&formId=${openTableItem.rowsData?.ID}`
     }
 }
 //mb视图选择框
 const mbSelected = (val: any) => {
     if (val) {
-        openTableItem.mtFormAddress = '/pages/smartform/render/index.html?' + `id=${val}&formId=${openTableItem.rowsData?.ID}`
+        let viewID = val
+        if (val == 'relevancePCView') {
+            viewID = openTableItem.pcView
+        }
+        openTableItem.mtFormAddress = '/pages/smartform/render/form.html?' + `id=${viewID}&formId=${openTableItem.rowsData?.ID}`
     }
 }
 //打开视图预览
@@ -1176,7 +1297,8 @@ const openView = (val: pointFormData, plat: string) => {
         btn: null,
         area: ['900px', '600px'],
         maxmin: true,
-        content: (window as any).iframApi + '/XA_Form/XANForm/Form?' + `id=${id}&formId=${val.rowsData?.ID}&independent=1`
+        content: (window as any).flowIframApi + '/pages/smartform/render/form.html?' + `id=${id}&formId=${val.rowsData?.ID}&openType=readonly&independent=1`
+        // content: '#/view'
     })
 }
 //获取自定义表单实例数据
@@ -1193,6 +1315,7 @@ const getCustomField = async (val: pointFormData) => {
                     }
                 })
             })
+            getDifferentData['1'](openTableItem)
             openTableItem.pcFormAddress = `/FormModule/Custmerform/WorkflowInstanceForm?id=${val.rowsData?.F_Id}`
         }
 
@@ -1223,6 +1346,7 @@ const systemDialogSubmit = () => {
             message: proxy?.maslg('请选择正确的表单模块')
         })
     }
+
     let hasFind = checkerData.value.adConfig!.otherForm.find(item => {
         return item.rowsData!.value == systemTreeData.value.value
     })
@@ -1273,24 +1397,31 @@ const saveFieldData = (tabsData: any[], tableData: authorityTable[]) => {
 const dialogFromVisible = ref(false)
 const watchCheckData = ref<any[]>([])
 let configurationCheckbox = <string[]>[]
-//高级设置弹窗
-const configurationBtn = () => {
-    watchCheckData.value = []
+const getParentForm = () => {
     const findData = <Shape[]>[]
     const findParent = (target: Shape) => {
         props.nodeList.map(item => {
-            if (item.type == "bpmn:SequenceFlow" && item.target.id == target.id && (item.configData.lineStrategy == 'agree' || item.source.type == 'bpmn:IntermediateCatchEvent')) {
+            if (item.type == "bpmn:SequenceFlow" && item.target.id == target.id && item.configData.lineStrategy == 'agree' && item.configData.pointFormData) {
                 findData.push(item.source)
                 findParent(item.source)
+            }
+            else if (item.type == 'bpmn:IntermediateCatchEvent' && item.configData.pointFormData && item.configData.pointFormData[0]?.selectForm) {
+                findData.push(item as Shape)
             }
         })
     }
     findParent(props.clickElement)
-    findData.map(item => {
-        if (item.configData.pointFormData[0].selectForm) {
-            if (item.configData.pointFormData[0].rowsData?.value != checkerData.value.pointFormData![0].rowsData?.value) {
+    return findData
+}
+//高级设置弹窗
+const configurationBtn = () => {
+    watchCheckData.value = []
+    let findData = getParentForm()
+    findData.map((item, index) => {
+        if (item.configData.pointFormData[0]?.selectForm) {
+            if (!checkerData.value.pointFormData || item.configData.pointFormData[0].rowsData?.value != checkerData.value.pointFormData![0]?.rowsData?.value) {
                 item.checkName = item.configData.pointFormData[0].selectForm + '-[' + item.name + ']'
-                item.checkId = item.configData.pointFormData[0].rowsData?.value
+                item.checkId = item.configData.pointFormData[0].rowsData?.value + index
                 watchCheckData.value.push(item)
             }
         }
@@ -1300,15 +1431,23 @@ const configurationBtn = () => {
 }
 const watchCheckChange = (val) => {
     if (val.length > 0) {
+        let hasId = ''
+        let checkId = <string[]>[]
         checkerData.value.adConfig!.otherForm = []
-        watchCheckData.value.map(item => {
-            val.map((citem, index) => {
-                if (item.checkId == citem) {
+        val.map((citem, index) => {
+            watchCheckData.value.map(item => {
+                if (item.checkId == citem && hasId != item.configData.pointFormData[0].rowsData?.value) {
+                    hasId = item.configData.pointFormData[0].rowsData?.value
+                    checkId.push(citem)
                     checkerData.value.adConfig!.otherForm.push(item.configData.pointFormData[0])
                     // setWatchForm.set(item.configData.pointFormData.rowsData.ID, item)
                 }
             })
         })
+        if (checkId.length != val.length) {
+            checkerData.value.adConfig!.watchFormData = checkId
+            ElMessage.error(proxy?.maslg('表单已选择'))
+        }
     }
 }
 const handleClose = () => {
@@ -1325,6 +1464,7 @@ const submitForm = () => {
         checkerData.value.pointFormData!.splice(1, checkerData.value.pointFormData!.length - 1)
     }
     checkerData.value.adConfig!.otherForm.map(item => {
+        item.rowsData!.formType = 'lookForm'
         checkerData.value.pointFormData!.push(item)
     })
     dialogFromVisible.value = false
@@ -1332,7 +1472,7 @@ const submitForm = () => {
 const isParentForm = computed(() => {
     return (val: pointFormData) => {
         let hasFind = checkerData.value.adConfig!.otherForm.find(item => {
-            return item.rowsData!.value == val.rowsData?.value
+            return item.rowsData!.value == val?.rowsData?.value
         })
         let hasget = false
         if (hasFind) {
@@ -1514,60 +1654,48 @@ const getDifferentData: differentData = {
         })
     },
     '1': (val: pointFormData) => {
-        setTimeout(() => {
-            if (val.customData.schemeEntity) {
-                backFieldData.value = []
-                const scheme = JSON.parse(val.customData.schemeEntity.F_Scheme)
-                val.tabsData = scheme.dbTable
-                val.tabsData.map(item => {
-                    item['ID'] = item.name
-                    if (item.relationField == '') {
-                        item['TableName'] = item.name + '(' + proxy?.maslg('主表') + ')'
+        if (val.customData.schemeEntity) {
+            backFieldData.value = []
+            const scheme = JSON.parse(val.customData.schemeEntity.F_Scheme)
+            val.tabsData = scheme.dbTable
+            val.tabsData.map(item => {
+                item['ID'] = item.name
+                if (item.relationField == '') {
+                    item['TableName'] = item.name + '(' + proxy?.maslg('主表') + ')'
+                }
+                else {
+                    item['TableName'] = item.name + '(' + proxy?.maslg('子表') + ')'
+                }
+            })
+            checkerFieldFormData.value = val.tabsData
+            val.fieldData = []
+            scheme.data.map(item => {
+                item.componts.map(citem => {
+                    if (citem.title && citem.field && citem.type == 'text') {
+                        citem['label'] = citem.title
+                        citem['value'] = citem.id
+                        citem['tableCode'] = ''
+                        citem['nFormId'] = ''
+                        citem['fieldid'] = citem.id
+                        citem['type'] = '1'
+                        citem['pageid'] = val.rowsData?.value
+                        citem['page'] = val.selectForm
+                        citem['TableId'] = citem.table ? citem.table : checkerData.value.pointFormData![0].tabsData[0].ID
+                        backFieldData.value.push(citem)
                     }
-                    else {
-                        item['TableName'] = item.name + '(' + proxy?.maslg('子表') + ')'
+                    if (citem.type == 'gridtable' || citem.type == 'girdtable') {
+                        citem['type'] = 'grid'
+                        setTableField(citem, false)
+                        citem.fieldsData.map(fitem => {
+                            setTableField(fitem, true, citem)
+                        })
+                    }
+                    else if (citem.type != 'guid') {
+                        setTableField(citem, false)
                     }
                 })
-                checkerFieldFormData.value = val.tabsData
-                val.fieldData = []
-                scheme.data.map(item => {
-                    item.componts.map(citem => {
-                        if (citem.title && citem.field && citem.type == 'text') {
-                            citem['label'] = citem.title
-                            citem['value'] = citem.id
-                            citem['tableCode'] = ''
-                            citem['nFormId'] = ''
-                            citem['fieldid'] = citem.id
-                            citem['type'] = '1'
-                            citem['pageid'] = val.rowsData?.value
-                            citem['page'] = val.selectForm
-                            citem['TableId'] = citem.table ? citem.table : checkerData.value.pointFormData![0].tabsData[0].ID
-                            backFieldData.value.push(citem)
-                        }
-                        if (citem.type == 'gridtable' || citem.type == 'girdtable') {
-                            citem['type'] = 'grid'
-                            setTableField(citem, false)
-                            citem.fieldsData.map(fitem => {
-                                setTableField(fitem, true, citem)
-                            })
-                        }
-                        else if (citem.type != 'guid') {
-                            setTableField(citem, false)
-                        }
-                    })
-                })
-            }
-        }, 500)
-        // console.log(val);
-        // checkPointApi.getFormTableList({ queryJson: JSON.stringify({ FormId: val.rowsData?.F_Id }) }).then((res: any) => {
-        //     console.log(res);
-
-        // }).catch(err => {
-        //     ElMessage({
-        //         type: 'error',
-        //         message: proxy?.maslg('获取表单失败')
-        //     })
-        // })
+            })
+        }
     }
 }
 const setTableField = (citem, ischild: boolean, fitem?) => {
@@ -1624,6 +1752,41 @@ const addTitleWriteBack = () => {
         writeSelect: ''
     })
 }
+const diaTable = ref<InstanceType<typeof dialogTable>>()
+const diaCategoryData = piniaStore().flowCategoryData
+const openChooseFlowTable = () => {
+    diaTable.value!.returnBackChooseRow(checkerData.value.checkData!.childFlow)
+    diaTable.value!.dialogFromVisible = true
+}
+const dialogTaleColumn = reactive([{
+    prop: 'F_Name',
+    label: '流程名称'
+}, {
+    prop: 'F_Category',
+    label: '流程分类'
+}, {
+    prop: 'operation',
+    label: '操作',
+    isCustom: true,
+    width: '100'
+}])
+const lookRow = (val: any) => {
+    let features = 'width=' + (window.screen.availWidth - 10) + ',height=' + (window.screen.availHeight - 30) + ',top=0,left=0,resizable=no,status=no,menubar=no,scrollbars=yes,toolbar=no'
+    window.open(`#/view?schemeId=${val.F_Code}`, val.F_Name, features)
+}
+const returnFlowData = (val: any) => {
+    checkerData.value.checkData!.childFlow = val
+    checkerData.value.checkData!.childFlowName = val.F_Name
+}
+onUnmounted(() => {
+    if (props.clickElement.type == 'bpmn:IntermediateCatchEvent') {
+        nodeList.value.forEach(item => {
+            if (item.id != props.clickElement.id && item.configData && item.configData.pointFormData && Object.keys(item.configData.pointFormData![0]?.rowsData ?? {}).length == 0) {
+                item.configData.pointFormData = JSON.parse(JSON.stringify(props.clickElement.configData.pointFormData))
+            }
+        })
+    }
+})
 </script>
 
 <style scoped></style>
